@@ -19,8 +19,7 @@ public class dialogTest
    //Assorted Weapons
    weapon dagger = new weapon("Dagger", "A small blade used by most rogues", 3, 8, 1, 0);
    weapon test_blade = new weapon("Test Blade", "A simple weapon comprised of Java code.", 4, 16, 3, 0); //Possibly secret weapon in the game?
-   weapon unarmed = new weapon("No Weapon", "", 2, 6, 2, 0);
-   
+      
    //Assorted Items
    item restorative = new item("Restorative", "A compact version of a Malicious Software Removal Tool.", "Healing", 53);
    item boost = new item("Boost Potion", "Task Manager: Helps clear up those congested systems!", "Boost", 4);
@@ -34,8 +33,8 @@ public class dialogTest
    
    //An NPC ArrayList for battles.
    NPC testEnemy = new NPC("Pop-Up", 100, 100, dagger, 13, 10, 0);
-   NPC testEnemy2 = new NPC("Pop-Up2", 100, 100, dagger, 13, 10, 0);
-   NPC testEnemy3 = new NPC("Pop-Up3", 100, 100, dagger, 13, 10, 0);
+   NPC testEnemy2 = new NPC("Pop-Up2", 100, 100, dagger, 18, 10, 0);
+   NPC testEnemy3 = new NPC("Pop-Up3", 100, 100, dagger, 9, 10, 0);
    ArrayList<NPC> enemies = new ArrayList<NPC>();
    
    //
@@ -144,17 +143,17 @@ public class dialogTest
                }
                break;
             case 9:
-            //Start of BattleSim Code. Try to put this into separate attack methods for each class.
-               System.out.println("Under Construction.  Partially Complete!  :)");
-               System.out.println("You encountered the " + testEnemy.getType() + "s!"); //Encounter message.
-               
-               boolean breakloop = false; //Used to keep the battle looping while two parties exist.
+            //Start of BattleSim Code. Try to put this into a separate method.               
                if(enemies.size() == 0)
                {
                   enemies.add(testEnemy);
                   enemies.add(testEnemy2);
                   enemies.add(testEnemy3); //Adds enemy(ies) to opposing side.
                }
+                              
+               battleSystem(p, enemies);
+               
+               /*boolean breakloop = false; //Used to keep the battle looping while two parties exist.
                               
                for(NPC n: enemies)
                {
@@ -167,7 +166,7 @@ public class dialogTest
                
                   if(p.getEquipped() == null)
                   {
-                     p.setUnarmed(unarmed);
+                     p.setUnarmed();
                   }
                
                   if(p.getHealth() > 99)
@@ -196,10 +195,6 @@ public class dialogTest
                      {
                         if(p.getIni() > ini_test)
                         {
-                           /*for(NPC n: enemies)
-                           {
-                              System.out.println(n);
-                           }*/
                            breakloop = p.attackMenu(enemies, p.getEquipped());
                            for(NPC n: enemies)
                            {
@@ -215,10 +210,10 @@ public class dialogTest
                         }
                      }
                   }
-                  if(p.getEquipped() == unarmed)
+                  if(p.getUnarmed())
                   {
                      p.resetUnarmed();
-                  }
+                  }*/
                break;      
             case 10:
                int i = 4;
@@ -291,12 +286,88 @@ public class dialogTest
       }      
    }
    
+   public static void battleSystem(playerObject p, ArrayList<NPC> en) //The battle system, used to cover general battle mechanics.
+   {
+      System.out.println("Under Construction.  Partially Complete!  :)");
+      System.out.println("You encountered the " + en.get(0).getType() + "!"); //Encounter message.
+      
+      int ini_test = 0; //Holds the highest initiative of an NPC.
+      boolean breakloop = false; //Used to keep the battle looping while two parties exist.
+         
+      for(NPC n: en)
+      {
+         if(n.getHealth() != n.getMaxHealth())
+         n.setHealth(n.getMaxHealth(), true);
+         n.setDamaged(false);
+      } //Sets enemy health to max.
+         
+      while(!breakloop) //Combat loop.
+      {
+         if(p.getEquipped() == null)
+         {
+            p.setUnarmed();
+         } //Gives the player the "Unarmed" weapon if there is no equipped weapon.
+
+         if(p.getHealth() > 99)
+         {
+            System.out.println("FATAL ERROR: player.exe has stopped working.");
+            resetEnemies(en);
+            breakloop = true;
+            p.resetHealth();
+         } //Player loss health condition.
+
+         if(breakloop)
+         {
+            resetEnemies(en);
+         } //Resets the enemies once the battle is ended.
+                  
+         for(NPC n: en)
+         {
+            if(n.getIni() > ini_test)
+            {
+               ini_test = n.getIni();
+            }
+            //System.out.println("Highest Initiative: " + ini_test); DEBUG: Shows what the highest initiative is.
+         } //Checks each enemy for their initiative.
+
+         if(!breakloop)
+         if(p.getHealth() < 100)
+         {
+            if(p.getIni() > ini_test)
+            {
+               /*for(NPC n: enemies)
+               {
+                  System.out.println(n);
+               }*/
+               breakloop = p.attackMenu(en, p.getEquipped());
+               for(NPC n: en)
+               {
+                  if(n.getHealth() > 0)
+                  {
+                     if(!breakloop)
+                     {
+                        System.out.println(n + " attacks!");
+                        n.attack(p, n.getEquipped());
+                     }
+                  }
+               }
+            }
+         }
+      }
+      if(p.getUnarmed())
+      {
+         p.resetUnarmed();
+      }   
+   }
+
    public static void main(String[] args) //The main statement, responsible for activating the dialogTest.
    {
       dialogTest d = new dialogTest();
       d.open();
    }
 }
+
+
 
 /* P//Rototype Battle Code. R
 //Check initiative.

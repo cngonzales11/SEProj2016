@@ -15,6 +15,7 @@ public class playerObject
    private ArrayList<item> inventory_item = new ArrayList<item>();
    private ArrayList<feat> feats = new ArrayList<feat>();
    private weapon equipped;
+   private weapon unarmed = new weapon("No Weapon", "", 2, 6, 2, 0);
    private Random r = new Random();
    
    //These variables are used in battle.
@@ -24,6 +25,7 @@ public class playerObject
    private boolean power_attack;
    private boolean over_time;
    private boolean spell;
+   private boolean item_used = false;
    private int defense;
    private int spellpower;
    private int damage = 0;
@@ -110,9 +112,9 @@ public class playerObject
       inventory.remove(getWeaponAt(a));
    }
    
-   public void setUnarmed(weapon w)
+   public void setUnarmed()
    {
-      equipped = w;
+      equipped = unarmed;
    }
    
    public void resetUnarmed()
@@ -232,6 +234,18 @@ public class playerObject
    public weapon getEquipped()
    {
       return equipped;
+   }
+   
+   public boolean getUnarmed()
+   {
+      if(equipped == unarmed)
+      {
+         return true;
+      }
+      else
+      {
+         return false;
+      }
    }
    
    //
@@ -376,6 +390,7 @@ public class playerObject
          if(health == 0)
          {
             System.out.println("It won't have any effect.");
+            item_used = false;
          }
          else
          {
@@ -392,6 +407,7 @@ public class playerObject
                System.out.println("You recovered "+remainder+" HP.");
                inventory_item.remove(i);
             }
+            item_used = true;
          }
       }
       
@@ -400,6 +416,7 @@ public class playerObject
          item_bonus = i.getValue();
          System.out.println("Attack and Damage Boosted by " + i.getValue() + ".");
          inventory_item.remove(i);
+         item_used = true;
       }
       
       if(i.getType() == "Grenade")
@@ -407,6 +424,7 @@ public class playerObject
          if(en == null)
          {
            System.out.println("There's no one to use this on.");
+           item_used = false;
          }
          else
          {
@@ -415,6 +433,7 @@ public class playerObject
                n.setHealth(i.getValue(), false);
             }
             inventory_item.remove(i);
+            item_used = true;
          }
       }
    }
@@ -472,80 +491,85 @@ public class playerObject
                         System.out.println(en.get(c).getHealth());
                      }
                   }
-                  System.out.println("CPU Usage: " + getHealth()); //Displays the player's health.
-                  System.out.println(en.get(a) + " selected"); //Displays the selected enemy.
-                  System.out.println("1 - Attack\n2 - Use Feat\n3 - Use Item\n4 - Run"); //Prints the menu for the player.
-                  sb_p = player_input.nextInt(); //Asks for the player's input.
-                  switch(sb_p)
+                  do
                   {
-                     case 1: //The base Attack case.
-                        damage = item_bonus;
-                        attack = item_bonus;
-                        attack(en.get(a), w);
-                        break;
-                     case 2: //The Use Feat case.
-                        listFeat();
-                        s_feat = player_input.nextInt();
-                        use_feat(getFeatAt(s_feat));
-                        //Test for Flurry
-                        if(getMATK())
-                        {
-                           for(int i = 0; i < 2; i++)
-                              attack(en.get(a), w);
-                        }
-                        if(getPATK())
-                        {
-                           damage += item_bonus;
-                           attack += item_bonus;
-                           attack(en.get(a), w);
+                     System.out.println("CPU Usage: " + getHealth()); //Displays the player's health.
+                     System.out.println(en.get(a) + " selected"); //Displays the selected enemy.
+                     System.out.println("1 - Attack\n2 - Use Feat\n3 - Use Item\n4 - Run"); //Prints the menu for the player.
+                     sb_p = player_input.nextInt(); //Asks for the player's input.
+                     
+                     switch(sb_p)
+                     {
+                        case 1: //The base Attack case.
                            damage = item_bonus;
                            attack = item_bonus;
-                        }
-                        //Test for Spells
-                        if(getSpell())
-                        {
-                           if(getAATK())
+                           attack(en.get(a), w);
+                           break;
+                        case 2: //The Use Feat case.
+                           listFeat();
+                           s_feat = player_input.nextInt();
+                           use_feat(getFeatAt(s_feat));
+                           //Test for Flurry
+                           if(getMATK())
                            {
-                              int range = en.size();
-                              int selected = a;
-                              for(int b = 0; b < 2; b++)
+                              for(int i = 0; i < 2; i++)
+                                 attack(en.get(a), w);
+                           }
+                           if(getPATK())
+                           {
+                              damage += item_bonus;
+                              attack += item_bonus;
+                              attack(en.get(a), w);
+                              damage = item_bonus;
+                              attack = item_bonus;
+                           }
+                           //Test for Spells
+                           if(getSpell())
+                           {
+                              if(getAATK())
                               {
-                                 selected = a+b;
-                                 int c = 0;
-                                 //System.out.println(selected + " " + range);  DEBUG: Shows what the selected element is and what range can be selected.
-                                 if(selected < range)
-                                    attack_spell(en.get(selected), getFeatAt(s_feat));
-                                 else
+                                 int range = en.size();
+                                 int selected = a;
+                                 for(int b = 0; b < 2; b++)
                                  {
-                                    selected = 0;
-                                    attack_spell(en.get(selected), getFeatAt(s_feat));
+                                    selected = a+b;
+                                    int c = 0;
+                                    //System.out.println(selected + " " + range);  DEBUG: Shows what the selected element is and what range can be selected.
+                                    if(selected < range)
+                                       attack_spell(en.get(selected), getFeatAt(s_feat));
+                                    else
+                                    {
+                                       selected = 0;
+                                       attack_spell(en.get(selected), getFeatAt(s_feat));
+                                    }
                                  }
+                                 a = selected;
+                                 resetFeats();
                               }
-                              a = selected;
-                              resetFeats();
+                              else
+                              {
+                                 attack_spell(en.get(a), getFeatAt(s_feat));
+                              }
                            }
-                           else
+                           over_time = false;
+                           break;
+                        case 3: //The Use Item case.
+                           showInventory_item();
+                           if(getItemSize() != 0)
                            {
-                              attack_spell(en.get(a), getFeatAt(s_feat));
+                              System.out.println("Select an item...");
+                              s_item = player_input.nextInt();
+                              use(getItemAt(s_item), en);
                            }
-                        }
-                        over_time = false;
-                        break;
-                     case 3: //The Use Item case.
-                        showInventory_item();
-                        if(getItemSize() != 0)
-                        {
-                           System.out.println("Select an item...");
-                           s_item = player_input.nextInt();
-                           use(getItemAt(s_item), en);
-                        }
-                        break;
-                     case 4: //The Run case.
-                        //End of BattleSim code.
-                        System.out.println("EXITING BATTLE SIMULATION...");
-                        f = true;
-                        break;
-                  }
+                           break;
+                        case 4: //The Run case.
+                           //End of BattleSim code.
+                           System.out.println("EXITING BATTLE SIMULATION...");
+                           f = true;
+                           break;
+                     }
+                     //System.out.println(sb_p + " " + item_used); DEBUG: Shows the switch case number and the item_used value.
+                  }while(sb_p == 3 && !item_used); //"While the "Use Item" option is selected and an item is not used to some effect..."
                }
             }
          }
@@ -601,8 +625,8 @@ public class playerObject
          System.out.println(n.getHealth());
          if(getOT())
          {
-         n.setDamaged(true);
-         System.out.println(n.getType() + " is burned!");
+            n.setDamaged(true);
+            System.out.println(n.getType() + " is burned!");
          }
       }
       else
