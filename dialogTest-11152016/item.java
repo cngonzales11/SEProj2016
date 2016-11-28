@@ -9,7 +9,7 @@ public class item
    private String desc;
    private String type;
    private int value;
-   private int position;
+   private int number;
    
    //
    //CONSTRUCTORS:
@@ -27,9 +27,9 @@ public class item
    //
    //SETTERS:
    //
-   public void setPos(int pos)
+   public void setNum(int num)
    {
-      position = pos;
+      number = num;
    }   
    
    //
@@ -60,9 +60,9 @@ public class item
       return value;
    }
    
-   public int getPos()
+   public int getNum()
    {
-      return position;
+      return number;
    }
    
    //

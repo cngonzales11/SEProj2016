@@ -12,7 +12,7 @@ public class NPC
    private int health;
    private int max_health;
    private weapon equipped;
-   private ArrayList<feat> feats = new ArrayList<feat>();
+   private ArrayList<feat> feats = new ArrayList<>();
    private Random r = new Random();
    
    //These variables are used in battle.

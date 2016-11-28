@@ -14,11 +14,14 @@ public class dialogTest
    private int ini_test = 0;
 
    //The Player
-   playerObject p = new playerObject("None", 0, 84, 20, 12, 0);
+   playerObject p = new playerObject("None", 0, 84, 16, 12, 0);
    
    //Assorted Weapons
-   weapon dagger = new weapon("Dagger", "A small blade used by most rogues", 3, 8, 1, 0);
+   weapon dagger = new weapon("Dagger", "A small blade used by most rogues.", 3, 8, 1, 0);
    weapon test_blade = new weapon("Test Blade", "A simple weapon comprised of Java code.", 4, 16, 3, 0); //Possibly secret weapon in the game?
+   weapon dagger_player = new weapon("Dagger", "A small blade that can slip by most defenses.", 5, 12, 6, 0);
+   weapon greatsword = new weapon("Greatsword", "A large and heavy sword with a long grip.", 2, 20, 4, 0);
+   weapon staff = new weapon("Staff", "A long stick that conducts code well.", 3, 10, 12, 0);
       
    //Assorted Items
    item restorative = new item("Restorative", "A compact version of a Malicious Software Removal Tool.", "Healing", 53);
@@ -32,10 +35,10 @@ public class dialogTest
    feat fire = new feat("Ignition", "Your enemies spark and burst into flames", -1, 9, 3, 0, 0, "Over-Time", false);
    
    //An NPC ArrayList for battles.
-   NPC testEnemy = new NPC("Pop-Up", 100, 100, dagger, 13, 10, 0);
-   NPC testEnemy2 = new NPC("Pop-Up2", 100, 100, dagger, 18, 10, 0);
-   NPC testEnemy3 = new NPC("Pop-Up3", 100, 100, dagger, 9, 10, 0);
-   ArrayList<NPC> enemies = new ArrayList<NPC>();
+   NPC testEnemy = new NPC("Code Snippet", 100, 100, dagger, 13, 10, 0);
+   NPC testEnemy2 = new NPC("Code Snippet 2", 100, 100, dagger, 18, 10, 0);
+   NPC testEnemy3 = new NPC("Code Snippet 3", 100, 100, dagger, 9, 10, 0);
+   ArrayList<NPC> enemies = new ArrayList<>();
    
    //
    //METHODS:
@@ -152,68 +155,6 @@ public class dialogTest
                }
                               
                battleSystem(p, enemies);
-               
-               /*boolean breakloop = false; //Used to keep the battle looping while two parties exist.
-                              
-               for(NPC n: enemies)
-               {
-                  if(n.getHealth() != n.getMaxHealth())
-                  n.setHealth(n.getMaxHealth(), true);
-               } //Sets health to max.
-         
-               while(!breakloop) //Combat loop.
-               {
-               
-                  if(p.getEquipped() == null)
-                  {
-                     p.setUnarmed();
-                  }
-               
-                  if(p.getHealth() > 99)
-                  {
-                     System.out.println("FATAL ERROR: player.exe has stopped working.");
-                     resetEnemies(enemies);
-                     breakloop = true;
-                     p.resetHealth();
-                  } //Player loss health condition.
-                  
-                  if(breakloop)
-                  {
-                     resetEnemies(enemies);
-                  }
-                  
-                  for(NPC n: enemies)
-                  {
-                     if(n.getIni() > ini_test)
-                     {
-                        ini_test = n.getIni();
-                     }
-                  }
-                  
-                  if(!breakloop)
-                     if(p.getHealth() < 100)
-                     {
-                        if(p.getIni() > ini_test)
-                        {
-                           breakloop = p.attackMenu(enemies, p.getEquipped());
-                           for(NPC n: enemies)
-                           {
-                              if(n.getHealth() > 0)
-                              {
-                                 if(!breakloop)
-                                 {
-                                    System.out.println(n + " attacks!");
-                                    n.attack(p, n.getEquipped());
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-                  if(p.getUnarmed())
-                  {
-                     p.resetUnarmed();
-                  }*/
                break;      
             case 10:
                int i = 4;
@@ -247,19 +188,178 @@ public class dialogTest
                System.exit(0);
                break;
          }
-         EntertoContinue_silent();
+         EntertoContinue();
       }
       while(select != EXIT);
    }
    
-   public void EntertoContinue() //Stops the output until the user presses Enter.
+   public void run()
+   {
+       int selection;
+       String command;
+       boolean entered = false;
+       System.out.println("Run Method Called");
+       System.out.println("June 06, 2996: A young programmer is tasked to create a new \nsecure server for the World Wide Web.");
+       EntertoContinue_silent();
+       System.out.println("All is going well until a storm rolls into the area and their computer is struck by lightning.");
+       EntertoContinue_silent();
+       System.out.println("The surge of electricity goes through their computer into their nervous system,\ntransferring their consciousness into their newly constructed server...");
+       EntertoContinue_silent(); //The starting blurb.
+       
+       System.out.println("You come to after what seems like ages.  It's hard to remember anything.");
+       System.out.println("You try to remember who you are...");
+       
+       do
+       {
+       System.out.println("(Type \"select\" to choose your class or \"describe\" to read a description of each class)");
+       command = kb.nextLine();
+       if(command.equals("describe") && !entered)
+       {
+          System.out.println("Warrior - A fighter.  The warrior class has a low initiative but high defense\nallowing them to easily shrug off attacks.");
+          System.out.println("Rogue - A stealthy killer.  The rogue class has a high initiative but low defense\nallowing them to make the first attack more often.");
+          System.out.println("Mage - A magic user.  The mage class has good initiative and low defense,\nbut has powerful attacks and spells.");
+       }
+       else
+       {
+          entered = true;
+          do
+          {
+          System.out.println("1 - Warrior\n2 - Rogue\n3 - Mage");
+          selection = kb.nextInt();
+          System.out.print("Some memories are coming back...You remember ");
+          switch(selection)
+          {
+             case 1:
+                p.setType("Warrior");
+                p.setDef(35);
+                p.addFeat(power_attack);
+                System.out.println("your strength and skills in fighting...");
+                break;
+             case 2:
+                p.setType("Rogue");
+                p.setDef(25);
+                p.setInitiative(28);
+                p.addFeat(flurry);
+                System.out.println("your quick, stealthy personality...");
+                break;
+             case 3:
+                p.setType("Mage");
+                p.setDef(12);
+                p.setInitiative(20);
+                p.addFeat(lightning);
+                p.addFeat(fire);
+                p.setSP(25);
+                System.out.println("your skills in coding, particularly with creating objects...");
+                break;
+          }
+       }
+       while(selection > 3 || selection < 0);
+       }
+       }while(!entered);
+       EntertoContinue_silent();
+       System.out.println("\"What just happened?...\"");
+       do
+       {
+       System.out.println("1 - Try to remember what happened.\n2 - Examine your surroundings\n3 - Try to move around.");
+       selection = kb.nextInt();
+       
+       switch(selection)
+       {
+           case 1:
+               System.out.println("You can't recall any specifics.  You remember a white box,\na flash, and then...nothing...");
+               break;
+           case 2:
+               System.out.println("The area around is a light blue.  Lines of ones and zeros float around everywhere.");
+               break;
+           case 3:
+               System.out.println("You start walking forward...");
+               break;
+       }
+       }while(selection != 3);
+       EntertoContinue_silent();
+       System.out.println("From behind you, a loud buzzing can be heard...");
+       EntertoContinue_silent();
+       System.out.println("You see black and red blobs of ones and zeros...\n");
+       EntertoContinue_silent();
+       System.out.println("1 - Try to talk with the blobs\n2 - Take a close look at the blobs\n3 - Try to attack the blobs");
+       
+       selection = kb.nextInt();
+       switch(selection)
+       {
+           case 1:
+               System.out.println("You greet the blobs...");
+               System.out.println("All you get in return is an ear-gratting buzz.");
+               break;
+           case 2:
+               System.out.println("Looking closer at the blobs, you notice the ones and zeros\nemulate a certain pattern...");
+               EntertoContinue_silent();
+               System.out.println("1...0...1...0...0...1...1...0...0...1...0...1...0...0");
+               System.out.println("The pattern seems familiar to you somehow...");
+               break;
+           case 3:
+               System.out.println("You charge at the blobs, but are pushed back by some force.");
+               break;
+       }
+       System.out.println("You see some text above you: \"player.exe CPU Usage: 0%\"");
+       EntertoContinue_silent();
+       System.out.println("\"CPU Usage? player.exe?...IS THAT ME?!\"");
+       EntertoContinue_silent();
+       System.out.println("The blobs attack!\n\"CPU Usage: 4%\"");
+       p.setHealth(4);
+       EntertoContinue_silent();
+       System.out.println("\"Guess that's my health, then...If that goes...I go...\"");
+       EntertoContinue_silent();
+       System.out.println("\"I need to take these guys out...But how?\"\nYou think of a weapon you could use...");
+       System.out.println("1 - Dagger\n2 - Greatsword\n3 - Staff");
+       
+       selection = kb.nextInt();
+       switch(selection)
+       {
+           case 1:
+               p.addToInventory(dagger_player);
+               break;
+           case 2:
+               p.addToInventory(greatsword);
+               break;
+           case 3:
+               p.addToInventory(staff);
+               break;
+       }
+       p.setEquipped(1);
+       System.out.println("You visualize a " + p.getEquipped() + ".");
+       EntertoContinue_silent();
+       System.out.println("\"This'll work...\"");
+       EntertoContinue_silent();
+       
+       if(enemies.size() == 0)
+               {
+                  enemies.add(testEnemy);
+                  enemies.add(testEnemy2);
+                  enemies.add(testEnemy3); //Adds enemy(ies) to opposing side.
+               }
+       
+       battleSystem(p, enemies);
+       
+       if(p.getHealth() > 99)
+       {
+           EntertoContinue();
+       }
+       else
+       {
+           System.out.println("Well...That's taken care of...\nNow to find out what's going on...");
+       }
+       
+       EntertoContinue();
+   }
+   
+   public static void EntertoContinue() //Stops the output until the user presses Enter.
    {
       Scanner c = new Scanner(System.in);
       System.out.println("Press Enter to continue.");
       c.nextLine();
    }
    
-   public void EntertoContinue_silent() //EntertoContinue, without a printed message.
+   public static void EntertoContinue_silent() //EntertoContinue, without a printed message.
    {
       Scanner sl = new Scanner(System.in);
       sl.nextLine();
@@ -288,10 +388,10 @@ public class dialogTest
    
    public static void battleSystem(playerObject p, ArrayList<NPC> en) //The battle system, used to cover general battle mechanics.
    {
-      System.out.println("Under Construction.  Partially Complete!  :)");
-      System.out.println("You encountered the " + en.get(0).getType() + "!"); //Encounter message.
+      System.out.println("You encountered the " + en.get(0).getType() + "s!"); //Encounter message.
       
       int ini_test = 0; //Holds the highest initiative of an NPC.
+      NPC starter = null; //Holds the NPC with the highest initiative.
       boolean breakloop = false; //Used to keep the battle looping while two parties exist.
          
       for(NPC n: en)
@@ -326,6 +426,7 @@ public class dialogTest
             if(n.getIni() > ini_test)
             {
                ini_test = n.getIni();
+               starter = n;
             }
             //System.out.println("Highest Initiative: " + ini_test); DEBUG: Shows what the highest initiative is.
          } //Checks each enemy for their initiative.
@@ -340,15 +441,29 @@ public class dialogTest
                   System.out.println(n);
                }*/
                breakloop = p.attackMenu(en, p.getEquipped());
-               for(NPC n: en)
-               {
-                  if(n.getHealth() > 0)
+               EntertoContinue_silent();
+            }
+            else
+            {
+                if(starter.getHealth() > 0)
                   {
                      if(!breakloop)
                      {
-                        System.out.println(n + " attacks!");
-                        n.attack(p, n.getEquipped());
+                        System.out.println(starter + " attacks!");
+                        starter.attack(p, starter.getEquipped());
                      }
+                  }
+                breakloop = p.attackMenu(en, p.getEquipped());
+                EntertoContinue_silent();
+            }
+            for(NPC n: en)
+            {
+               if(n.getHealth() > 0)
+               {
+                  if(!breakloop)
+                  {
+                     System.out.println(n + " attacks!");
+                     n.attack(p, n.getEquipped());
                   }
                }
             }
@@ -362,8 +477,41 @@ public class dialogTest
 
    public static void main(String[] args) //The main statement, responsible for activating the dialogTest.
    {
+      Scanner main_sys = new Scanner(System.in);
       dialogTest d = new dialogTest();
-      d.open();
+      int selection;
+      boolean testing = true;
+      
+      if(!testing)
+      {
+      do
+      {
+      System.out.println("Welcome to Back-Door Out: A Text Based Adventure Game!\nPlease press Enter to Continue.");
+      EntertoContinue_silent();
+      selection = 1;
+      }
+      while(selection != 1);
+      }
+      else
+      {
+      do
+      {
+      System.out.println("Welcome to Back-Door Out: A Text Based Adventure Game!\nPlease select your option\n1 - Start Game   2 - Run Method Tests");
+      selection = main_sys.nextInt();
+      }
+      while(selection < 1 && selection > 2);
+      }
+      
+      switch(selection)
+      {
+          case 1:
+             d.p.setHealth(0);
+             d.run();
+             break;
+          case 2:
+             d.open();
+             break;
+      }
    }
 }
 

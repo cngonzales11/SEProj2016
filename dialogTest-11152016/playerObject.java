@@ -11,9 +11,9 @@ public class playerObject
    private String className;
    private int health;
    private int morality;
-   private ArrayList<weapon> inventory = new ArrayList<weapon>();
-   private ArrayList<item> inventory_item = new ArrayList<item>();
-   private ArrayList<feat> feats = new ArrayList<feat>();
+   private ArrayList<weapon> inventory = new ArrayList<>();
+   private ArrayList<item> inventory_item = new ArrayList<>();
+   private ArrayList<feat> feats = new ArrayList<>();
    private weapon equipped;
    private weapon unarmed = new weapon("No Weapon", "", 2, 6, 2, 0);
    private Random r = new Random();
@@ -216,7 +216,17 @@ public class playerObject
    //Returns what item is at the given reference.
    public item getItemAt(int a)
    {
-      return inventory_item.get(a-1);
+      item selection = null;
+      boolean breakloop = false;
+      for(item i: inventory_item)
+      {
+          if(i.getNum() == a && !breakloop)
+          {
+              selection = i;
+              breakloop = true;
+          }
+      }
+      return selection;
    }
    
    //Returns what item is at the given reference.
@@ -238,14 +248,7 @@ public class playerObject
    
    public boolean getUnarmed()
    {
-      if(equipped == unarmed)
-      {
-         return true;
-      }
-      else
-      {
-         return false;
-      }
+       return equipped == unarmed;
    }
    
    //
@@ -315,10 +318,32 @@ public class playerObject
       System.out.println("None");
       else
       {
+         String previous = inventory_item.get(0).getName();
+         int numberofitems = 0;
          for(item i: inventory_item)
          {
-            System.out.println(pos + " - " + i);
-            pos++;
+            if(i.getName() == previous)
+            {
+                i.setNum(pos);
+                numberofitems++;
+            }
+            else
+            {
+                System.out.println(pos + " - " + previous + " (" + numberofitems + ")");
+                numberofitems = 1;
+                pos++;
+                i.setNum(pos);
+            }
+            previous = i.getName();
+            //System.out.println(inventory_item.indexOf(i) + " " + (inventory_item.size()-numberofitems)); DEBUG: Shows the index of the item and the size of the modified item inventory.
+            if(inventory_item.indexOf(i) == inventory_item.size()-numberofitems)
+            {
+                System.out.println(pos + " - " + previous + " (" + numberofitems + ")");
+                numberofitems = 0;
+                pos = 1;
+            }
+            //System.out.println(pos + " - " + i);
+            //pos++;
          }
       }
    }
@@ -486,16 +511,16 @@ public class playerObject
                   {
                      if(en.get(c).getDamaged() && en.get(c).getHealth() > 0)
                      {
-                        System.out.println(en.get(c).getType() + " suffers " + damage_ot + " burn damage.");
+                        System.out.print(en.get(c).getType() + " suffers " + damage_ot + " burn damage. (Health: ");
                         en.get(c).setHealth(damage_ot, false);
-                        System.out.println(en.get(c).getHealth());
+                        System.out.println(en.get(c).getHealth() + ")");
                      }
                   }
                   do
                   {
                      System.out.println("CPU Usage: " + getHealth()); //Displays the player's health.
-                     System.out.println(en.get(a) + " selected"); //Displays the selected enemy.
-                     System.out.println("1 - Attack\n2 - Use Feat\n3 - Use Item\n4 - Run"); //Prints the menu for the player.
+                     System.out.println(en.get(a) + " selected (Health: " + en.get(a).getHealth() + ")"); //Displays the selected enemy.
+                     System.out.println("1 - Attack\n2 - Use Feat\n3 - Use Item"); //Prints the menu for the player.
                      sb_p = player_input.nextInt(); //Asks for the player's input.
                      
                      switch(sb_p)
@@ -559,7 +584,16 @@ public class playerObject
                            {
                               System.out.println("Select an item...");
                               s_item = player_input.nextInt();
-                              use(getItemAt(s_item), en);
+                              int listsize = inventory_item.size();
+                                  if(getItemAt(s_item) != null)
+                                  {
+                                      use(getItemAt(s_item), en);
+                                  }
+                                  else
+                                  {
+                                      System.out.println("Not a valid number.");
+                                  }
+                              //use(getItemAt(s_item), en); The original code.
                            }
                            break;
                         case 4: //The Run case.
@@ -620,9 +654,9 @@ public class playerObject
       {
          int tot_damage;
          tot_damage = w.getDamage() + damage;
-         System.out.println("Hit! " + n.getType() + " suffers " + tot_damage + " damage!");
+         System.out.print("Hit! " + n.getType() + " suffers " + tot_damage + " damage! (Health: ");
          n.setHealth(tot_damage, false); //"...the weapon's damage will be put into the damage attribute of the respective weapon class."
-         System.out.println(n.getHealth());
+         System.out.println(n.getHealth() + ")");
          if(getOT())
          {
             n.setDamaged(true);
@@ -631,7 +665,7 @@ public class playerObject
       }
       else
       {
-         System.out.println("Miss. " + n.getType() + " suffers no damage.");
+         System.out.println("Miss. " + n.getType() + " suffers no damage. (Health: " + n.getHealth() + ")");
       }
    }
    
@@ -646,9 +680,9 @@ public class playerObject
          int tot_damage;
          tot_damage = damage_s + damage;
          //System.out.println(damage + " " + " " + damage_s + " " + tot_damage); DEBUG: Prints the damage variables inputted.
-         System.out.println("Hit! " + n.getType() + " suffers " + tot_damage + " damage!");
+         System.out.print("Hit! " + n.getType() + " suffers " + tot_damage + " damage! (Health: ");
          n.setHealth(tot_damage, false); //"...the spell's damage will be put into the damage attribute of the respective feat class."
-         System.out.println(n.getHealth());
+         System.out.println(n.getHealth() + ")");
          if(getOT())
          {
          n.setDamaged(true);
@@ -659,11 +693,5 @@ public class playerObject
       {
          System.out.println("Miss. " + n.getType() + " suffers no damage.");
       }
-   }
-   
-   public void checkEnemies(ArrayList<NPC> en)
-   {
-      
-   }
-   
+   }   
 }
