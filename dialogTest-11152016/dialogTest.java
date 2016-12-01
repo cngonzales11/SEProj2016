@@ -10,18 +10,33 @@ public class dialogTest
    
    Random r = new Random();
    Scanner kb = new Scanner(System.in);
-   private final int EXIT = 12;
+   private final int EXIT = 13;
    private int ini_test = 0;
+   private int item_add = 0;
+   
+   //These booleans relate to choices in the game.
+   boolean blob_exm = false; //Examine the code blobs.
+   boolean par_exm = false; //Examine the parity.
+   boolean par_fix = false; //Choose between fixing the parity and leaving it.
+   boolean code = false; //Examine the blobs before battle.
+   boolean npc_lives = true; //Talk to or ambush npcs.
 
    //The Player
-   playerObject p = new playerObject("None", 0, 84, 16, 12, 0);
+   playerObject p = new playerObject("None", 0, 0, 16, 12, 0);
    
    //Assorted Weapons
-   weapon dagger = new weapon("Dagger", "A small blade used by most rogues.", 3, 8, 1, 0);
-   weapon test_blade = new weapon("Test Blade", "A simple weapon comprised of Java code.", 4, 16, 3, 0); //Possibly secret weapon in the game?
+   weapon dagger = new weapon("Dagger", "A small blade used by most rogues.", 5, 8, 2, 0);
+   weapon whitesteel = new weapon("White Steel Staff", "A bladed staff of unerring sharpness.", 8, 21, 3, 0);
+   weapon test_blade = new weapon("Test Blade", "A simple weapon comprised of Java code.", 4, 16, 3, 0);
+   
    weapon dagger_player = new weapon("Dagger", "A small blade that can slip by most defenses.", 5, 12, 6, 0);
+   
    weapon greatsword = new weapon("Greatsword", "A large and heavy sword with a long grip.", 2, 20, 4, 0);
-   weapon staff = new weapon("Staff", "A long stick that conducts code well.", 3, 10, 12, 0);
+   
+   weapon staff = new weapon("Staff", "A long stick that conducts code well.", 3, 14, 12, 9);
+   weapon ice_staff = new weapon("Cube Staff","A rod that conducts cold magic.", 3, 18, 7, 12);
+   weapon fire_staff = new weapon("Torch","A burning staff.", 7, 22, 15, 6);
+   weapon lightning_staff = new weapon("Charge Rod","Lightning runs along the runes.", 5, 20, 6, 20);
       
    //Assorted Items
    item restorative = new item("Restorative", "A compact version of a Malicious Software Removal Tool.", "Healing", 53);
@@ -29,10 +44,26 @@ public class dialogTest
    item firebomb = new item("Fire Bomb", "A firewall in a conveniently small package.", "Grenade", 12);
    
    //The testing feats.
-   feat flurry = new feat("Flurry", "Allows the user to attack more than once a round.", 0, 2, 0, 0, 0, "Attack Twice", true);
-   feat power_attack = new feat("Power Attack", "Puts all the user's strength into one swing.", -3, 8, 0, 0, 0, "Power Attack", true);
-   feat lightning = new feat("Lightning", "A charged blast fires from the user's hands.", 2, 20, 0, 0, 0, "Area Attack", false);
-   feat fire = new feat("Ignition", "Your enemies spark and burst into flames", -1, 9, 3, 0, 0, "Over-Time", false);
+   //Rogue: Starting
+   feat flurry = new feat("Flurry", "The user speeds up their attacks,\nallowing them to attack twice a round.", 0, 2, 0, 0, 0, "Attack Twice", true);
+   //Rogue: Unlockable
+   feat flashbang = new feat("Flourish", "A flashy attack that slips through enemy defenses", 8, 8, 0, 0, 0, "Power Attack",true);
+   
+   //Warrior: Starting
+   feat power_attack = new feat("Power Attack", "The user puts all their strength into one swing,\nmaking it more likely to miss but deal more damage.", -3, 8, 0, 0, 0, "Power Attack", true);
+   //Warrior: Unlockable
+   feat parry_strike = new feat("Parry", "After attacking, the user assumes\na defensive stance, ready for the next attack.", -2, 5, 0, 10, 10, "Defensive", true);
+   
+   //Mage: Starting
+   feat arcane_blast = new feat("Arcane Burst","Waves of code lash out at your opponents.", 5, 15, 0, 0, 0, "Full Attack", false);
+   
+   //Mage: Weapon-Dependent
+   feat lightning = new feat("Lightning", "A charged blast fires from the user's hands,\ndealing moderate damage to two enemies.", -10, 20, 0, 0, 0, "Area Attack", false);
+   feat fire = new feat("Ignition", "Your enemies spark and burst into flames,\ndealing burn damage over time.", -1, 9, 3, 0, 0, "Over-Time", false);
+   feat freeze = new feat("Chill", "You target an enemy with a cold blast,\nlowering their intiative and attack", 0, 5, 0, 0, 0, "Slow", false);
+   
+   //Mage: Unlockable
+   
    
    //An NPC ArrayList for battles.
    NPC testEnemy = new NPC("Code Snippet", 100, 100, dagger, 13, 10, 0);
@@ -44,7 +75,7 @@ public class dialogTest
    //METHODS:
    //
    
-   public void open() //The method responsible for showing the menu and accepting user input.
+   public void open() //Opens the game's debug mode.  Accessible if testing is active.
    {
       int select, s, sb, sc;
       
@@ -71,13 +102,21 @@ public class dialogTest
       
       //Adds a feat depending on class choice.
       if(p.getType() == "Rogue")
+      {
          p.addFeat(flurry);
+         p.addFeat(flashbang);
+      }
       if(p.getType() == "Warrior")
+      {
          p.addFeat(power_attack);
+         p.addFeat(parry_strike);
+      }
       if(p.getType() == "Mage")
       {
+         p.addFeat(arcane_blast);
          p.addFeat(lightning);
          p.addFeat(fire);
+         p.addFeat(freeze);
          p.setSP(25);
       }
       
@@ -85,7 +124,7 @@ public class dialogTest
       do
       {
          System.out.println("Select an option");
-         System.out.println("1 - Set HP to 100\n2 - Set Morality to -10\n3 - Set Morality to +10\n4 - Show Class\n5 - Show Stats\n6 - Show Inventory\n7 - Equip Weapon\n8 - Use Item\n9 - Battle Demo\n10 - Open Test Chest\n11 - Roll D20\n12 - Exit");
+         System.out.println("1 - Set HP to 100\n2 - Set Morality to -10\n3 - Set Morality to +10\n4 - Show Class\n5 - Show Stats\n6 - Show Inventory\n7 - Equip Weapon\n8 - Use Item\n9 - Battle Demo\n10 - Open Test Chest\n11 - Roll D20\n12 - Describe Feats\n13 - Exit");
          select = kb.nextInt();
 
          switch(select)
@@ -184,30 +223,36 @@ public class dialogTest
                   System.out.println();
                break;
             case 12:
-               System.out.println("Ending...");
-               System.exit(0);
+               p.describeFeat();
+               break;
+            case 13:
+               System.out.println("Exiting Method Test...");
                break;
          }
          EntertoContinue();
       }
       while(select != EXIT);
+      
+      p.removeFeats();
+      p.removeItems();
    }
    
-   public void run()
+   public void run() //The game storyline.  Accessible in normal and debug mode.
    {
        int selection;
        String command;
        boolean entered = false;
-       System.out.println("Run Method Called");
-       System.out.println("June 06, 2996: A young programmer is tasked to create a new \nsecure server for the World Wide Web.");
+       //System.out.println("Run Method Called"); DEBUG: Shows what method is called.
+       System.out.print("June 06, 2996: A young programmer is tasked to create a new \nsecure server for the World Wide Web.");
        EntertoContinue_silent();
-       System.out.println("All is going well until a storm rolls into the area and their computer is struck by lightning.");
+       System.out.print("All is going well until a storm rolls into the area and their computer is struck by lightning.");
        EntertoContinue_silent();
        System.out.println("The surge of electricity goes through their computer into their nervous system,\ntransferring their consciousness into their newly constructed server...");
        EntertoContinue_silent(); //The starting blurb.
        
        System.out.println("You come to after what seems like ages.  It's hard to remember anything.");
        System.out.println("You try to remember who you are...");
+       EntertoContinue_silent();
        
        do
        {
@@ -216,11 +261,16 @@ public class dialogTest
        if(command.equals("describe") && !entered)
        {
           System.out.println("Warrior - A fighter.  The warrior class has a low initiative but high defense\nallowing them to easily shrug off attacks.");
-          System.out.println("Rogue - A stealthy killer.  The rogue class has a high initiative but low defense\nallowing them to make the first attack more often.");
-          System.out.println("Mage - A magic user.  The mage class has good initiative and low defense,\nbut has powerful attacks and spells.");
+          System.out.println("Starting Feats:\n" + power_attack + ":\n" + power_attack.getDesc());
+          System.out.println("\nRogue - A stealthy killer.  The rogue class has a high initiative but low defense\nallowing them to make the first attack more often.");
+          System.out.println("Starting Feats:\n" + flurry + ":\n" + flurry.getDesc());
+          System.out.println("\nMage - A magic user.  The mage class has good initiative and low defense,\nbut has powerful attacks and spells.");
+          System.out.println("Starting Feats:\n" + arcane_blast + ":\n" + arcane_blast.getDesc() + "\n");
        }
        else
        {
+          if(command.equals("select"))
+          {
           entered = true;
           do
           {
@@ -246,14 +296,18 @@ public class dialogTest
                 p.setType("Mage");
                 p.setDef(12);
                 p.setInitiative(20);
-                p.addFeat(lightning);
-                p.addFeat(fire);
+                p.addFeat(arcane_blast);
                 p.setSP(25);
                 System.out.println("your skills in coding, particularly with creating objects...");
                 break;
           }
        }
        while(selection > 3 || selection < 0);
+       }
+          else
+       {
+           System.out.println("You try to remember something...But nothing comes to mind...");
+       }
        }
        }while(!entered);
        EntertoContinue_silent();
@@ -266,20 +320,24 @@ public class dialogTest
        switch(selection)
        {
            case 1:
-               System.out.println("You can't recall any specifics.  You remember a white box,\na flash, and then...nothing...");
+               System.out.print("You can't recall any specifics.  You remember a white box,\na flash, and then...nothing...");
                break;
            case 2:
-               System.out.println("The area around is a light blue.  Lines of ones and zeros float around everywhere.");
+               System.out.print("The area around is a light blue.  Lines of ones and zeros float around everywhere.");
                break;
            case 3:
-               System.out.println("You start walking forward...");
+               System.out.print("You start walking forward...");
                break;
+       }
+       if(selection != 3)
+       {
+          EntertoContinue_silent();
        }
        }while(selection != 3);
        EntertoContinue_silent();
-       System.out.println("From behind you, a loud buzzing can be heard...");
+       System.out.print("From behind you, a loud buzzing can be heard...");
        EntertoContinue_silent();
-       System.out.println("You see black and red blobs of ones and zeros...\n");
+       System.out.print("You see black and red blobs of ones and zeros...\n");
        EntertoContinue_silent();
        System.out.println("1 - Try to talk with the blobs\n2 - Take a close look at the blobs\n3 - Try to attack the blobs");
        
@@ -287,19 +345,23 @@ public class dialogTest
        switch(selection)
        {
            case 1:
-               System.out.println("You greet the blobs...");
-               System.out.println("All you get in return is an ear-gratting buzz.");
+               System.out.print("You greet the blobs...");
+               EntertoContinue_silent();
+               System.out.print("All you get in return is an ear-gratting buzz.");
                break;
            case 2:
-               System.out.println("Looking closer at the blobs, you notice the ones and zeros\nemulate a certain pattern...");
+               code = true;
+               System.out.print("Looking closer at the blobs, you notice the ones and zeros\nemulate a certain pattern...");
                EntertoContinue_silent();
-               System.out.println("1...0...1...0...0...1...1...0...0...1...0...1...0...0");
-               System.out.println("The pattern seems familiar to you somehow...");
+               System.out.print("0010...1001...1001...0011");
+               EntertoContinue_silent();
+               System.out.print("The pattern seems familiar to you somehow...");
                break;
            case 3:
-               System.out.println("You charge at the blobs, but are pushed back by some force.");
+               System.out.print("You charge at the blobs, but are pushed back by some force.");
                break;
        }
+       EntertoContinue_silent();
        System.out.println("You see some text above you: \"player.exe CPU Usage: 0%\"");
        EntertoContinue_silent();
        System.out.println("\"CPU Usage? player.exe?...IS THAT ME?!\"");
@@ -307,12 +369,17 @@ public class dialogTest
        System.out.println("The blobs attack!\n\"CPU Usage: 4%\"");
        p.setHealth(4);
        EntertoContinue_silent();
-       System.out.println("\"Guess that's my health, then...If that goes...I go...\"");
+       System.out.print("\"Guess that's my health, then...If that goes...I go...\"");
        EntertoContinue_silent();
-       System.out.println("\"I need to take these guys out...But how?\"\nYou think of a weapon you could use...");
+       System.out.println("\"I need to take these guys out...But how?\"");
+       EntertoContinue_silent();
+       System.out.println("You think of a weapon you could use...");
+       do
+       {
        System.out.println("1 - Dagger\n2 - Greatsword\n3 - Staff");
        
        selection = kb.nextInt();
+       }while(selection > 3 || selection < 1);
        switch(selection)
        {
            case 1:
@@ -340,16 +407,348 @@ public class dialogTest
        
        battleSystem(p, enemies);
        
-       if(p.getHealth() > 99)
-       {
-           EntertoContinue();
-       }
-       else
+       if(p.getHealth() < 100)
        {
            System.out.println("Well...That's taken care of...\nNow to find out what's going on...");
+           EntertoContinue_silent();
+           
+           do
+           {
+           if(!par_exm)
+           {
+              System.out.println("1 - Look around");
+           }
+           else
+           {
+              System.out.println("1 - Examine the break");
+           }
+           if(!blob_exm)
+           {
+              System.out.println("2 - Examine the code blobs\n3 - Continue moving");
+           }
+           else
+           {
+              System.out.println("2 - Continue moving");
+           }
+           selection = kb.nextInt();
+           switch(selection)
+           {
+               case 1:
+                   if(!par_exm)
+                   {
+                      par_exm = true;
+                      System.out.print("The area is the same as before.");
+                      EntertoContinue_silent();
+                      System.out.print("The only difference is that there is a large break\nin the ones and zeros up ahead.");
+                      EntertoContinue_silent();
+                      System.out.println("Reality around that area seems distorted.");
+                      EntertoContinue_silent();
+                      System.out.println("1 - Walk to the break\n2 - Ignore the break");
+                      selection = kb.nextInt();
+                   
+                      switch(selection)
+                      {
+                         case 1:
+                             System.out.print("You arrive at the break.");
+                             EntertoContinue_silent();
+                             System.out.print("Whatever caused this, it's not helping the area.");
+                             EntertoContinue_silent();
+                             System.out.print("It seems to be expanding to the rest of the area,\ndissolving it into nothing.");
+                             EntertoContinue_silent();
+                             System.out.println("You notice the blobs are moving towards the break, filling it in.");
+                             EntertoContinue_silent();
+                             par_fix = true;
+                             break;
+                         case 2:
+                             System.out.println("You ignore the break for now.");
+                             break;
+                      }
+                   }
+                   else
+                   {
+                       System.out.print("You arrive at the break.");
+                       EntertoContinue_silent();
+                       System.out.print("Whatever caused this, it's not helping the area.");
+                       EntertoContinue_silent();
+                       System.out.print("It seems to be expanding to the rest of the area,\ndissolving it into nothing.");
+                       EntertoContinue_silent();
+                       System.out.println("You notice the blobs are moving towards the break, filling it in.");
+                       par_fix = true;
+                       EntertoContinue_silent();
+                   }
+                   if(par_exm && par_fix)
+                   {
+                       System.out.print("As the blobs fill the break, you notice a familiar line of code.");
+                       EntertoContinue_silent();
+                       System.out.print("There is a resource statement that has a corrupted reference.");
+                       EntertoContinue_silent();
+                       System.out.println("You feel like if you try to fix it, it'll help somehow...");
+                       System.out.println("1 - Attempt to fix the code\n2 - Leave the code alone.");
+                       selection = kb.nextInt();
+                       switch(selection)
+                       {
+                           case 1:
+                               p.setMorality(5);
+                               System.out.print("You stretch out your hand and code flows out into the break.");
+                               EntertoContinue_silent();
+                               System.out.print("You rewrite the code and the reference fixes itself.");
+                               EntertoContinue_silent();
+                               System.out.print("The line of code fades into the ones and zeros.");
+                               EntertoContinue_silent();
+                               System.out.println("You see text float in the air: \"Parity Fixed\"\nAfter which the ones and zeros fade into what looks like a forest.");
+                               break;
+                           case 2:
+                               p.setMorality(-5);
+                               System.out.println("You decide to let the code stay corrupted.");
+                               EntertoContinue_silent();
+                               System.out.println("The line dissolves and seems to collapse on itself.");
+                               EntertoContinue_silent();
+                               System.out.println("You see text float in the air: \"Parity Deleted\"\nAfter which the ones and zeros fade into what looks like a forest.");
+                               break;
+                       }
+                       selection = 3;
+                   }
+                   
+                   break;
+               case 2:
+                   if(!blob_exm)
+                   {
+                      blob_exm = true;
+                      System.out.println("The blobs seem to be carrying some kind of items.");
+                      System.out.println("(Items Received: 5 Restoratives)");
+                      item_add = 5;
+                      for(int i = 0; i < item_add; i++)
+                      {
+                          p.addToInventory_item(restorative);
+                      }
+                   }
+                   else
+                   {
+                      System.out.println("You walk on, noticing a large break in the ones\nand zeros as you move on.");
+                      EntertoContinue_silent();
+                      System.out.print("It seems to be expanding to the rest of the area,\ndissolving it into nothing.");
+                      EntertoContinue_silent();
+                      System.out.print("You notice the blobs are moving towards the break, filling it in.");
+                      EntertoContinue_silent();
+                      System.out.println("The break, however, closes in on itself and\nexpands to reveal the world around you: a large forest.");
+                      selection = 3;
+                   }
+                   break;
+               case 3:
+                   if(!par_exm)
+                   {
+                      System.out.print("You walk on, noticing a large break in the ones\nand zeros as you move on.");
+                      EntertoContinue_silent();
+                      System.out.print("It");
+                   }
+                   else
+                   {
+                      System.out.print("The break");
+                   }
+                   System.out.print(" seems to be expanding to the rest of the area,\ndissolving it into nothing.");
+                   EntertoContinue_silent();
+                   System.out.print("You notice the blobs are moving towards the break, filling it in.");
+                   EntertoContinue_silent();
+                   System.out.println("The break, however, closes in on itself and\nexpands to reveal the world around you: a large forest.");
+                   break;
+           }
+           }while(selection != 3);
        }
        
        EntertoContinue();
+       
+       if(p.getHealth() < 100) //The first parity.
+       {
+           System.out.print("While you are walking, you happen upon a young woman in the forest.");
+           EntertoContinue_silent();
+           System.out.println("1 - Talk to her\n2 - Ambush her\n3 - Keep walking");
+           
+           selection = kb.nextInt();
+           switch(selection)
+           {
+               case 1:
+                   System.out.print("You greet the girl.  She is a little surprised.");
+                   EntertoContinue_silent();
+                   System.out.print("After a long silence, she speaks up...");
+                   EntertoContinue_silent();
+                   System.out.println("\"Is there something you need?\"");
+                   System.out.println("1 - \"What are you doing?\"\n2 - \"Where am I?\"\n3 - \"Never mind.\"");
+                   
+                   selection = kb.nextInt();
+                   switch(selection)
+                   {
+                       case 1:
+                           System.out.println("\"There have been Parities popping up everywhere,\nripping the world apart.\"");
+                           EntertoContinue_silent();
+                           System.out.println("1 - \"Parities?\"");
+                           while(kb.nextInt() != 1)
+                           {
+                               kb.nextInt();
+                           }
+                           System.out.print("\"Yeah...the big breaches in the world that consume everything they touch.\"");
+                           EntertoContinue_silent();
+                           System.out.print("\"My father sent me to check on the central hub.\"");
+                           EntertoContinue_silent();
+                           System.out.println("\"He's worried this might spread to the rest of the Web.\"");
+                           EntertoContinue_silent();
+                           break;
+                       case 2:
+                           System.out.print("\"You seem confused...Are you from here?\"");
+                           break;
+                       case 3:
+                           break;
+                   }
+                   break;
+               case 2:
+                   npc_lives = false;
+                   p.setMorality(-20);
+                   System.out.print("You sneak up on the woman and take her out with relative ease.");
+                   EntertoContinue_silent();
+                   System.out.print("You notice a note on her body.");
+                   EntertoContinue_silent();
+                   System.out.println("\"I need you to go to the central hub and check on things there.\"");
+                   System.out.println("\"Whatever you do, keep away from the Parities.\"");
+                   break;
+               case 3:
+                   break;
+           }
+           System.out.print("If you weren't sure already, this confirmed it.");
+           EntertoContinue_silent();
+           System.out.print("You were inside the Web, or part of it at least.");
+           EntertoContinue_silent();
+           System.out.print("You recall ");
+           if(code)
+           {
+              System.out.print("the binary pattern you saw from the blobs.");
+           }
+           else
+           {
+              System.out.print("the blobs from before having a certain pattern of binary code.");
+           }
+           EntertoContinue_silent();
+           System.out.print("0010...two...1001...nine...1001...nine...0011...six...");
+           EntertoContinue_silent();
+           System.out.print("2996?");
+           EntertoContinue_silent();
+           System.out.println("Was this your server?  That would explain the flash from before.");
+           EntertoContinue_silent();
+           if(!npc_lives)
+           {
+               System.out.println("At any rate, you should get going.  Who knows what could happen...");
+           }
+           else
+           {
+               do
+               {
+               System.out.println("1 - \"Do you need any help?\"\n2 - \"How do I get out of here?\"");
+               
+               selection = kb.nextInt();
+               switch(selection)
+               {
+                   case 1:
+                       p.setMorality(5);
+                       System.out.print("\"I think I'll be okay.  I need to...\"");
+                       EntertoContinue_silent();
+                       System.out.print("She pauses for a moment...");
+                       EntertoContinue_silent();
+                       System.out.print("\"Actually, I do...\"");
+                       EntertoContinue_silent();
+                       System.out.print("\"I probably won't make it to the central hub.\"");
+                       EntertoContinue_silent();
+                       System.out.print("She looks away with a defeated look on her face.");
+                       EntertoContinue_silent();
+                       System.out.print("\"It was foolish of me to think I could with all the rogue code.\"");
+                       EntertoContinue_silent();
+                       System.out.println("\"But someone has to do something.  So, I thought I would at least try...\"");
+                       
+                       do
+                       {
+                       System.out.println("1 - \"I came across a break in the world not to long ago.\n    I was able to fix it...or something...\"\n2 - \"I can fight whatever blocks my way.\"");
+                       
+                       selection = kb.nextInt();
+                       switch(selection)
+                       {
+                           case 1:
+                               System.out.print("\"So you fixed a parity?  I didn't know that was possible...\"");
+                               EntertoContinue_silent();
+                               System.out.print("\"Well, if you can do that, we might have a chance...\"");
+                               EntertoContinue_silent();
+                               System.out.print("\"If I can gather people to fix the parities here, can you go fix the larger parities,\nincluding the one in the central hub?\"");
+                               EntertoContinue_silent();
+                               System.out.println("\"I think there are at most two more...\"");
+                               System.out.println("1 - \"Sure thing.  Might as well help while I'm here.\n2 - \"Do what you want.  I need to get out of here now.\"\"");
+                               
+                               selection = kb.nextInt();
+                               switch(selection)
+                               {
+                                   case 1:
+                                       p.setMorality(8);
+                                       System.out.print("\"Thank you.  I'll do my best here; good luck.\"");
+                                       EntertoContinue_silent();
+                                       System.out.print("\"Here.  I'm not sure if it'll help, but I think you can use this...\"");
+                                       EntertoContinue_silent();
+                                       System.out.print("You got the ");
+                                       if(p.getType().equals("Mage"))
+                                       {
+                                           System.out.println(lightning_staff + "! (Attack: " + (lightning_staff.getBase()+lightning_staff.getAtkB()) + " Damage: " + lightning_staff.getDamage() + ")");
+                                           p.addToInventory(lightning_staff);
+                                       }
+                                       else
+                                       {
+                                           System.out.println(whitesteel + "! (Attack: " + (whitesteel.getBase()+whitesteel.getAtkB()) + " Damage: " + whitesteel.getDamage() + ")");
+                                           p.addToInventory(whitesteel);
+                                       }
+                                       do
+                                       {
+                                       System.out.println("Equip? 1 - Yes  2 - No");
+                                       
+                                       selection = kb.nextInt();
+                                       }while(selection < 1 || selection > 2);
+                                       switch(selection)
+                                       {
+                                           case 1:
+                                               p.unequip();
+                                               p.equipWeapon();
+                                               break;
+                                           case 2:
+                                               break;
+                                       }
+                                       if(p.getType().equals("Mage"))
+                                       {
+                                          System.out.print("You feel the magic flowing through this weapon.");
+                                          EntertoContinue_silent();
+                                          p.addFeat(lightning);
+                                          System.out.println("New Feat Gained: " + lightning);
+                                          System.out.println(lightning.getDesc());
+                                       }
+                                       break;
+                                   case 2:
+                                       p.setMorality(-8);
+                                       System.out.print("\"Well, I'll do what I can to help but my friends and family need me.\"");
+                                       break;
+                               }
+                               break;
+                           case 2:
+                               System.out.print("\"Fighting is only half the battle.  There's still the parities...\"");
+                               EntertoContinue_silent();
+                               System.out.println("\"If those aren't fixed, this world will collapse in on itself.\"");
+                               break;
+                       }
+                       }while(selection != 1);
+                       break;
+                   case 2:
+                       System.out.print("\"You're not making sense...This is the world we live in...\"");
+                       EntertoContinue_silent();
+                       System.out.println("\"And with our current state of affairs,\nI don't think now is the time for jokes.\"");
+                       break;
+               }
+               }while(selection != 1);
+           }
+       }
+       
+       EntertoContinue();
+       p.removeFeats();
+       p.removeItems();
    }
    
    public static void EntertoContinue() //Stops the output until the user presses Enter.
@@ -413,7 +812,7 @@ public class dialogTest
             System.out.println("FATAL ERROR: player.exe has stopped working.");
             resetEnemies(en);
             breakloop = true;
-            p.resetHealth();
+            //p.resetHealth();
          } //Player loss health condition.
 
          if(breakloop)
@@ -468,7 +867,18 @@ public class dialogTest
                }
             }
          }
+         ini_test = 0;
+         for(NPC n: en)
+         {
+            if(n.getIni() > ini_test && n.getHealth() > 0)
+            {
+               ini_test = n.getIni();
+               starter = n;
+            }
+            //System.out.println("Highest Initiative: " + ini_test); //DEBUG: Shows what the highest initiative is.
+         } //Checks each enemy for their initiative.
       }
+      resetEnemies(en);
       if(p.getUnarmed())
       {
          p.resetUnarmed();
@@ -482,6 +892,8 @@ public class dialogTest
       int selection;
       boolean testing = true;
       
+      do
+      {
       if(!testing)
       {
       do
@@ -496,7 +908,7 @@ public class dialogTest
       {
       do
       {
-      System.out.println("Welcome to Back-Door Out: A Text Based Adventure Game!\nPlease select your option\n1 - Start Game   2 - Run Method Tests");
+      System.out.println("Welcome to Back-Door Out: A Text Based Adventure Game!\nPlease select your option\n1 - Start Game   2 - Run Method Tests   3 - Exit");
       selection = main_sys.nextInt();
       }
       while(selection < 1 && selection > 2);
@@ -511,83 +923,11 @@ public class dialogTest
           case 2:
              d.open();
              break;
+          case 3:
+             System.out.println("Ending...");
+             System.exit(0);
+             break;
       }
+      }while(selection != 3);
    }
 }
-
-
-
-/* P//Rototype Battle Code. R
-//Check initiative.
-if(!breakloop)
-   if(p.getIni() > test//Enemy.getIni() && p.getHealth() < 100) E
-   {
-      System.out.println("CPU Usage: " + p.getHealth());
-      System.out.println("1 - A//Ttack\n2 - Use Feat\n3 - Use Item\n4 - run");  T
-      sb = kb.nextInt();
-      switch(sb)
-      {
-         case 1:
-            if((p.makeRoll()+test_blade.getBase()+test_blade.getAtkB()) > testEnemy.getDef())
-            {
-               System.out.println("Hit! " + testEnemy.getType() + " suffe//Rs " + test_blade.getDamage() + " damage!"); R
-               testEnemy.setHealth(test_blade.getDamage(), false);
-               System.out.println(testEnemy.getHealth());
-            }
-            else
-            {
-               System.out.println("Miss. " + testEnemy.getType() + " suffers n//O damage."); O
-            }
-            break;
-         case 2:
-            p.listFeat();
-            s = kb.nextInt();
-            p.use_feat(p.getFeatAt(s));
-            //Test for Flurry
-            if(p.getMATK())
-            {
-               for(int i = 0; i < 2; i++)
-                  if((p.makeRoll()+test_blade.getBase()+test_blade.getAtkB()) > testEnemy.getDef())
-                  {
-                     System.out.println("Hit! " + testEnemy.getType() + " suffers " + (test_blade.getDamage()+p.getFeatAt(s).getDmg()) + " damage!");
-                     testEnemy.setHealth((test_blade.getDamage()+p.getFeatAt(s).getDmg()), false);
-                     System.out.printl//N(testEnemy.getHealth()); N
-                  }
-                  else
-                  {
-                     System.out.println("Miss. " + testEnemy.getType() + " suffers no damage.");
-                  }
-            }
-            //Test for Power Attack
-            else
-            {
-               if((p.makeR//Oll()+test_blade.getBase()+test_blade.getAtkB()+p.getFeatAt(s).getAB()) > testEnemy.getDef()) O
-               {
-                  System.out.println("Hit! " + testEnemy.getType() + " suffers " + (test_blade.getDamage()+p.getFeatAt(s).getDmg()) + " damage!");
-                  testEnemy.setHealth((test_blade.getDamage()+p.getFeatAt(s).getDmg()), false);
-                  System.out.println(testEnemy.getHealth());
-               }
-               else
-               {
-                  System.out.println("Miss. " + testEnemy.getType() + " suffers no damage.");
-               }
-            }
-            break;
-         case 3:
-            p.showInvento//Ry_item(); R
-            if(p.getItemSize() != 0)
-            {
-               System.out.println("Select an item...");
-               s = kb.nextInt();
-               p.use(p.getItemAt(s));
-            }
-            break;
-         //End of Bat//TleSim code. T
-         case 4:
-            System.out.println("EXITING BATTLE SIMULATION...");
-            breakloop = true;
-            break;
-         }
-      }
-   }
-*/

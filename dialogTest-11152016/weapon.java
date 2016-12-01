@@ -30,7 +30,7 @@ public class weapon
    //
    //SETTERS:
    //
-   
+      
    //Sets the attack bonus of the weapon.
    public void setAtkB(int amount)
    {

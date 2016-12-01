@@ -17,8 +17,8 @@ public class NPC
    
    //These variables are used in battle.
    private int initiative;
+   private int attack_re;
    private boolean damaged = false;
-   private boolean mult_attack;
    private int defense;
    private int spellpower;
    
@@ -56,25 +56,31 @@ public class NPC
    //Sets the NPC's initiative.
    public void setInitiative(int amount)
    {
-      initiative = amount;
+      initiative += amount;
    }
    
    //Sets the NPC's defense.
    public void setDef(int amount)
    {
-      defense = amount;
+      defense += amount;
    }
    
    //Sets the NPC's spellpower, if the NPC is a mage.
    public void setSP(int amount)
    {
-      spellpower = amount;
+      spellpower += amount;
    }
    
    //Sets the NPC's damaged attribute.
    public void setDamaged(boolean value)
    {
       damaged = value;
+   }
+   
+   //Sets the NPC's attack reducer.
+   public void setATR(int amount)
+   {
+      attack_re += amount;
    }
    
    //
@@ -123,9 +129,16 @@ public class NPC
       return damaged;
    }
    
+   //Returns the NPC's equipped weapon.
    public weapon getEquipped()
    {
       return equipped;
+   }
+   
+   //Returns the NPC's attack reducer.
+   public int getATR()
+   {
+       return attack_re;
    }
    
    //
@@ -144,8 +157,8 @@ public class NPC
       int atroll;
       atroll = makeRoll();
       int weapon_bonus = w.getBase() + w.getAtkB();
-      System.out.println((atroll+weapon_bonus) + " vs. " + p.getDef());
-      if(atroll+weapon_bonus > p.getDef())
+      System.out.println((atroll+weapon_bonus-attack_re) + " vs. " + p.getDef());
+      if(atroll+weapon_bonus-attack_re > p.getDef() && atroll != 1)
       {
          System.out.println("Hit! Player suffers " + w.getDamage() + " damage!");
          p.setHealth(w.getDamage());

@@ -22,8 +22,10 @@ public class playerObject
    private int initiative;
    private boolean mult_attack;
    private boolean area_attack;
+   private boolean full_attack;
    private boolean power_attack;
    private boolean over_time;
+   private boolean slow;
    private boolean spell;
    private boolean item_used = false;
    private int defense;
@@ -76,6 +78,7 @@ public class playerObject
       }
    }
    
+   //Resets the health variable.
    public void resetHealth()
    {
       health = 0;
@@ -86,6 +89,17 @@ public class playerObject
    {
       if(morality+amount >= -100 && morality+amount <= 100)
          morality = morality+amount;
+      else
+      {
+         if(morality+amount < -100)
+         {
+             morality = -100;
+         }
+         if(morality+amount > 100)
+         {
+             morality = 100;
+         }
+      }
    }
    
    //Sets the player's initiative.
@@ -106,27 +120,34 @@ public class playerObject
       spellpower = amount;
    }
    
+   //Sets the equipped weapon to a weapon in the player's inventory.
    public void setEquipped(int a)
    {
       equipped = getWeaponAt(a);
       inventory.remove(getWeaponAt(a));
    }
    
+   //Equips the unarmed weapon when in battle.
    public void setUnarmed()
    {
       equipped = unarmed;
    }
    
+   //Resets the unarmed status after battle.
    public void resetUnarmed()
    {
       equipped = null;
    }
    
+   //Resets feats after use in battle.
    public void resetFeats()
    {
       mult_attack = false;
       area_attack = false;
+      full_attack = false;
       power_attack = false;
+      over_time = false;
+      slow = false;
    }
    
    //
@@ -151,6 +172,8 @@ public class playerObject
       return morality;
    }
    
+   //These getters relate to battle.
+   
    //Returns the player's initiative.
    public int getIni()
    {
@@ -174,13 +197,16 @@ public class playerObject
    {
       return mult_attack;
    }
-   
-   //These getters relate to battle.
-   
+      
    //Returns if the player activated an area-attack feat (Ie. Barrage)
    public boolean getAATK()
    {
       return area_attack;
+   }
+   
+   public boolean getFATK()
+   {
+      return full_attack;
    }
    
    //Returns if the player activated a power attack feat (Ie. Power Attack)
@@ -199,6 +225,11 @@ public class playerObject
    public boolean getOT()
    {
       return over_time;
+   }
+   
+   public boolean getSlow()
+   {
+       return slow;
    }
    
    //Returns the size of the Item Inventory.
@@ -264,7 +295,27 @@ public class playerObject
    //Adds items to the Item Inventory.
    public void addToInventory_item(item i)
    {
-      inventory_item.add(i);
+      boolean added = false;
+      int size = inventory_item.size();
+      int add_position = -1;
+      for(int a = 0; a < size; a++)
+      {
+         if(inventory_item.get(a).getName().equals(i.getName()) && !added)
+         {
+            add_position = inventory_item.indexOf(inventory_item.get(a));
+            //System.out.println(i + " will be added at " + add_position); DEBUG: Shows what position the item is entered in.
+            added = true;
+         }
+      }
+      if(added)
+      {
+         inventory_item.add(add_position, i);
+      }
+      else
+      {
+         //System.out.println("New Item! " + i + " will be added at " + (size+1)); DEBUG: New item message.
+         inventory_item.add(i);
+      }
    }
    
    //Adds a feat to the Feat List.
@@ -273,6 +324,33 @@ public class playerObject
       feats.add(f);
    }
    
+   //Removes all feats from the player.
+   public void removeFeats()
+   {
+      int size = feats.size();
+      for(int i = 0; i < size; i++)
+      {
+          //System.out.println("Removed " + feats.get(0)); //DEBUG: Shows what feat was removed.
+          feats.remove(0);
+      }
+   }
+   
+   //Removes all weapons and items from the player's inventory.
+   public void removeItems()
+   {
+      int size_items = inventory_item.size();
+      int size_weapons = inventory.size();
+      for(int i = 0; i < size_items; i++)
+      {
+          //System.out.println("Removed " + inventory_item.get(0)); //DEBUG: Shows what item was removed.
+          inventory_item.remove(0);
+      }
+      for(int i = 0; i < size_weapons; i++)
+      {
+          //System.out.println("Removed " + inventory.get(0)); //DEBUG: Shows what weapon was removed.
+          inventory.remove(0);
+      }
+   }
    
    //
    //LIST METHODS:
@@ -360,6 +438,14 @@ public class playerObject
       }
    }
    
+   public void describeFeat()
+   {
+      int select;
+      listFeat();
+      select = player_input.nextInt();
+      System.out.println(getFeatAt(select) + "\n" + getFeatAt(select).getDesc());
+   }
+   
    //
    //USE METHODS:
    //
@@ -370,8 +456,8 @@ public class playerObject
       System.out.println("You attacked with " + f.getName());
       if(f.getContact() == true)
       {
-         damage = f.getDmg();
-         attack = f.getAB();
+         damage += f.getDmg();
+         attack += f.getAB();
       }
       else
       {
@@ -386,6 +472,10 @@ public class playerObject
       {
          area_attack = true;
       }
+      if(f.getType() == "Full Attack")
+      {
+         full_attack = true;
+      }
       if(f.getType() == "Power Attack")
       {
          power_attack = true;
@@ -394,6 +484,10 @@ public class playerObject
       {
          over_time = true;
          damage_ot = f.getTD();
+      }
+      if(f.getType() == "Slow")
+      {
+          slow = true;
       }
       if(f.getContact() == false)
       {
@@ -438,7 +532,7 @@ public class playerObject
       
       if(i.getType() == "Boost")
       {
-         item_bonus = i.getValue();
+         item_bonus += i.getValue();
          System.out.println("Attack and Damage Boosted by " + i.getValue() + ".");
          inventory_item.remove(i);
          item_used = true;
@@ -479,6 +573,7 @@ public class playerObject
       return r.nextInt(20)+1;
    }
    
+   //Displays a menu for equipping a weapon.
    public void equipWeapon()
    {
       int s_w;
@@ -531,6 +626,8 @@ public class playerObject
                            attack(en.get(a), w);
                            break;
                         case 2: //The Use Feat case.
+                           damage = item_bonus;
+                           attack = item_bonus;
                            listFeat();
                            s_feat = player_input.nextInt();
                            use_feat(getFeatAt(s_feat));
@@ -542,15 +639,29 @@ public class playerObject
                            }
                            if(getPATK())
                            {
-                              damage += item_bonus;
-                              attack += item_bonus;
                               attack(en.get(a), w);
-                              damage = item_bonus;
-                              attack = item_bonus;
                            }
                            //Test for Spells
                            if(getSpell())
                            {
+                              if(getFATK())
+                              {
+                                 int range = en.size();
+                                 int selected = a;
+                                 for(int b = 0; b < en.size(); b++)
+                                 {
+                                    selected = a+b;
+                                    //System.out.println(selected + " " + range);  DEBUG: Shows what the selected element is and what range can be selected.
+                                    if(selected < range)
+                                       attack_spell(en.get(selected), getFeatAt(s_feat));
+                                    else
+                                    {
+                                       selected = 0;
+                                       attack_spell(en.get(selected), getFeatAt(s_feat));
+                                    }
+                                 }
+                                 a = en.size()-1;
+                              }
                               if(getAATK())
                               {
                                  int range = en.size();
@@ -573,10 +684,11 @@ public class playerObject
                               }
                               else
                               {
-                                 attack_spell(en.get(a), getFeatAt(s_feat));
+                                 if(!getFATK())
+                                    attack_spell(en.get(a), getFeatAt(s_feat));
                               }
                            }
-                           over_time = false;
+                           resetFeats();
                            break;
                         case 3: //The Use Item case.
                            showInventory_item();
@@ -650,7 +762,7 @@ public class playerObject
    {
       int atroll;
       atroll = makeRoll();
-      if((atroll+w.getBase()+w.getAtkB()+attack) > n.getDef())
+      if((atroll+w.getBase()+w.getAtkB()+attack) > n.getDef() && atroll != 1)
       {
          int tot_damage;
          tot_damage = w.getDamage() + damage;
@@ -675,11 +787,11 @@ public class playerObject
       int atroll;
       atroll = makeRoll();
       int damage_s = f.getDmg()+r.nextInt(12);
-      if((atroll+f.getAB()+spellpower+attack) > n.getDef())
+      if((atroll+f.getAB()+spellpower+attack) > n.getDef() && atroll != 1)
       {
          int tot_damage;
-         tot_damage = damage_s + damage;
-         //System.out.println(damage + " " + " " + damage_s + " " + tot_damage); DEBUG: Prints the damage variables inputted.
+         tot_damage = damage_s + damage + equipped.getStB();
+         //System.out.println(damage + " " + " " + damage_s + " " + tot_damage); //DEBUG: Prints the damage variables inputted.
          System.out.print("Hit! " + n.getType() + " suffers " + tot_damage + " damage! (Health: ");
          n.setHealth(tot_damage, false); //"...the spell's damage will be put into the damage attribute of the respective feat class."
          System.out.println(n.getHealth() + ")");
@@ -687,6 +799,14 @@ public class playerObject
          {
          n.setDamaged(true);
          System.out.println(n.getType() + " is burned!");
+         }
+         if(getSlow())
+         {
+             System.out.println(n.getIni() + " " + n.getATR());
+             n.setInitiative(-3);
+             n.setATR(2);
+             System.out.println(n.getType() + " is chilled!");
+             System.out.println(n.getIni() + " " + n.getATR());
          }
       }
       else
