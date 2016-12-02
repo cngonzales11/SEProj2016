@@ -7,6 +7,7 @@ public class weapon
    
    private String name;
    private String desc;
+   private String damage_type;
    private int damage;
    private int base_attack;
    private int attack_bonus;
@@ -17,10 +18,11 @@ public class weapon
    //
    
    //The constructor for the weapon class.
-   public weapon(String n, String ds, int b, int d, int ab, int sb)
+   public weapon(String n, String ds, String dt, int b, int d, int ab, int sb)
    {
       name = n;
       desc = ds;
+      damage_type = dt;
       base_attack = b;
       damage = d;
       attack_bonus = ab;
@@ -81,6 +83,11 @@ public class weapon
    public int getStB()
    {
       return stat_bonus;
+   }
+   
+   public String getDamageType()
+   {
+      return damage_type;
    }
    
    //

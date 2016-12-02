@@ -15,3 +15,9 @@ Type "java -jar BackDoorOut.jar" in the command box.
 
 Play the game! :)
 ------------------------------------------------
+Controls:
+Press Enter to start the game.
+When prompted for a number, enter the number you want and press Enter.
+When prompted for a word, enter the word you want and press Enter.
+Press Enter to advance dialog.
+------------------------------------------------

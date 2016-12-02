@@ -15,7 +15,7 @@ public class playerObject
    private ArrayList<item> inventory_item = new ArrayList<>();
    private ArrayList<feat> feats = new ArrayList<>();
    private weapon equipped;
-   private weapon unarmed = new weapon("No Weapon", "", 2, 6, 2, 0);
+   private weapon unarmed = new weapon("No Weapon", "", "Physical", 2, 6, 2, 0);
    private Random r = new Random();
    
    //These variables are used in battle.
@@ -25,7 +25,9 @@ public class playerObject
    private boolean full_attack;
    private boolean power_attack;
    private boolean over_time;
+   private boolean half_damage;
    private boolean slow;
+   private boolean defensive;
    private boolean spell;
    private boolean item_used = false;
    private int defense;
@@ -34,6 +36,8 @@ public class playerObject
    private int attack = 0;
    private int damage_ot = 0;
    private int item_bonus = 0;
+   private int weapon_bonus = 0;
+   private int defense_bonus = 0;
    
    Scanner player_input = new Scanner(System.in);
    
@@ -139,6 +143,12 @@ public class playerObject
       equipped = null;
    }
    
+   //Sets the player's weapon bonus.
+   public void setWeaponBonus(int amount)
+   {
+      weapon_bonus += amount;
+   }
+   
    //Resets feats after use in battle.
    public void resetFeats()
    {
@@ -147,7 +157,9 @@ public class playerObject
       full_attack = false;
       power_attack = false;
       over_time = false;
+      half_damage = false;
       slow = false;
+      defensive = false;
    }
    
    //
@@ -191,6 +203,12 @@ public class playerObject
    {
       return spellpower;
    }
+   
+   //Returns the player's weapon bonus, if any.
+   public int getWeaponBonus()
+   {
+      return weapon_bonus;
+   }
       
    //Returns if the player activated a multi-attack feat (Ie. Flurry)
    public boolean getMATK()
@@ -221,15 +239,22 @@ public class playerObject
       return spell;
    }
    
-   //Returns if the player activated a over-time feat (Ie. Lightning)
+   //Returns if the player activated a over-time feat (Ie. Ignition)
    public boolean getOT()
    {
       return over_time;
    }
    
+   //Returns if the player activated a slowing feat (Ie. Chill)
    public boolean getSlow()
    {
        return slow;
+   }
+   
+   //Returns if the player activated a half-damage feat (Ie. Killer Instinct)
+   public boolean getHD()
+   {
+       return half_damage;
    }
    
    //Returns the size of the Item Inventory.
@@ -485,9 +510,19 @@ public class playerObject
          over_time = true;
          damage_ot = f.getTD();
       }
+      if(f.getType() == "Half Damage")
+      {
+         half_damage = true;
+      }
       if(f.getType() == "Slow")
       {
           slow = true;
+      }
+      if(f.getType() == "Defensive")
+      {
+          defensive = true;
+          defense_bonus = f.getDB();
+          setHealth(-f.getHB());
       }
       if(f.getContact() == false)
       {
@@ -538,23 +573,23 @@ public class playerObject
          item_used = true;
       }
       
-      if(i.getType() == "Grenade")
-      {
-         if(en == null)
-         {
-           System.out.println("There's no one to use this on.");
-           item_used = false;
-         }
-         else
-         {
-            for(NPC n: en)
-            {
-               n.setHealth(i.getValue(), false);
-            }
-            inventory_item.remove(i);
-            item_used = true;
-         }
-      }
+//      if(i.getType() == "Grenade")
+//      {
+//         if(en == null)
+//         {
+//           System.out.println("There's no one to use this on.");
+//           item_used = false;
+//         }
+//         else
+//         {
+//            for(NPC n: en)
+//            {
+//               n.setHealth(i.getValue(), false);
+//            }
+//            inventory_item.remove(i);
+//            item_used = true;
+//         }
+//      }
    }
    
    //
@@ -584,6 +619,7 @@ public class playerObject
          s_w = player_input.nextInt();
          setEquipped(s_w);
          System.out.println("You equipped the " + equipped.getName());
+         weapon_bonus = equipped.getStB();
       }
    }
    
@@ -637,7 +673,11 @@ public class playerObject
                               for(int i = 0; i < 2; i++)
                                  attack(en.get(a), w);
                            }
-                           if(getPATK())
+                           if(getPATK() || getHD())
+                           {
+                              attack(en.get(a), w);
+                           }
+                           if(defensive)
                            {
                               attack(en.get(a), w);
                            }
@@ -696,7 +736,6 @@ public class playerObject
                            {
                               System.out.println("Select an item...");
                               s_item = player_input.nextInt();
-                              int listsize = inventory_item.size();
                                   if(getItemAt(s_item) != null)
                                   {
                                       use(getItemAt(s_item), en);
@@ -762,10 +801,33 @@ public class playerObject
    {
       int atroll;
       atroll = makeRoll();
-      if((atroll+w.getBase()+w.getAtkB()+attack) > n.getDef() && atroll != 1)
+      int tot_attack;
+      if(equipped.getDamageType().equals("Electric") || equipped.getDamageType().equals("Physical"))
+      {
+         tot_attack = atroll+w.getBase()+w.getAtkB()+attack+w.getStB();
+      }
+      else
+      {
+         tot_attack = atroll+w.getBase()+w.getAtkB()+attack;
+      }
+      if(tot_attack > n.getDef() && atroll != 1)
       {
          int tot_damage;
-         tot_damage = w.getDamage() + damage;
+         if(getHD())
+         {
+            tot_damage = n.getMaxHealth()/2 + damage;
+         }
+         else
+         {
+            if(equipped.getDamageType().equals("Fire") || equipped.getDamageType().equals("Physical"))
+            {
+               tot_damage = w.getDamage() + damage + w.getStB();
+            }
+            else
+            {
+               tot_damage = w.getDamage() + damage;
+            }
+         }
          System.out.print("Hit! " + n.getType() + " suffers " + tot_damage + " damage! (Health: ");
          n.setHealth(tot_damage, false); //"...the weapon's damage will be put into the damage attribute of the respective weapon class."
          System.out.println(n.getHealth() + ")");
@@ -786,11 +848,27 @@ public class playerObject
    {
       int atroll;
       atroll = makeRoll();
+      int tot_attack;
+      if(equipped.getDamageType().equals("Electric"))
+      {
+         tot_attack = atroll+f.getAB()+spellpower+attack+equipped.getStB();
+      }
+      else
+      {
+         tot_attack = atroll+f.getAB()+spellpower+attack;
+      }
       int damage_s = f.getDmg()+r.nextInt(12);
-      if((atroll+f.getAB()+spellpower+attack) > n.getDef() && atroll != 1)
+      if(tot_attack > n.getDef() && atroll != 1)
       {
          int tot_damage;
-         tot_damage = damage_s + damage + equipped.getStB();
+         if(equipped.getDamageType().equals("Fire"))
+         {
+            tot_damage = damage_s + damage + equipped.getStB();
+         }
+         else
+         {
+            tot_damage = damage_s + damage;
+         }
          //System.out.println(damage + " " + " " + damage_s + " " + tot_damage); //DEBUG: Prints the damage variables inputted.
          System.out.print("Hit! " + n.getType() + " suffers " + tot_damage + " damage! (Health: ");
          n.setHealth(tot_damage, false); //"...the spell's damage will be put into the damage attribute of the respective feat class."

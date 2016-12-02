@@ -20,39 +20,51 @@ public class dialogTest
    boolean par_fix = false; //Choose between fixing the parity and leaving it.
    boolean code = false; //Examine the blobs before battle.
    boolean npc_lives = true; //Talk to or ambush npcs.
+   boolean help_npc = false; //Helped the npc with her job.
+   boolean needtoleave = false; //Select need to leave dialog.
+   boolean help_webroot = false; //Helped the officer?
+   boolean kill_webroot = false; //Attacked the officer?
+   boolean find_main = false; //Went to find the main parity.
+   boolean fix_main = false; //Decided to fix the main parity.
+   boolean hack_main = false; //Decided to hack the main parity.
+   boolean fullhackend = false; //The full dark side end.
+   boolean fullfixend = false; //The full light side end.
+   boolean rest_desc = false; //Found a restorative.
+   boolean boost_desc = false; //Found a boost potion.
 
    //The Player
    playerObject p = new playerObject("None", 0, 0, 16, 12, 0);
    
    //Assorted Weapons
-   weapon dagger = new weapon("Dagger", "A small blade used by most rogues.", 5, 8, 2, 0);
-   weapon whitesteel = new weapon("White Steel Staff", "A bladed staff of unerring sharpness.", 8, 21, 3, 0);
-   weapon test_blade = new weapon("Test Blade", "A simple weapon comprised of Java code.", 4, 16, 3, 0);
+   weapon dagger = new weapon("Dagger", "A small blade used by most rogues.", "Physical", 14, 8, 0, 0);
+   weapon corruption = new weapon("Data Miner", "Hacks through most data with ease.", "Physical", 12, 18, 3, 0);
+   weapon whitesteel = new weapon("White Steel Staff", "A bladed staff of unerring sharpness.", "Physical", 8, 21, 3, 5);
+   weapon test_blade = new weapon("Test Blade", "A simple weapon comprised of Java code.", "Physical", 4, 16, 3, 0);
    
-   weapon dagger_player = new weapon("Dagger", "A small blade that can slip by most defenses.", 5, 12, 6, 0);
+   weapon dagger_player = new weapon("Dagger", "A small blade that can slip by most defenses.", "Physical", 5, 12, 6, 0);
    
-   weapon greatsword = new weapon("Greatsword", "A large and heavy sword with a long grip.", 2, 20, 4, 0);
+   weapon greatsword = new weapon("Greatsword", "A large and heavy sword with a long grip.", "Physical", 2, 20, 4, 0);
    
-   weapon staff = new weapon("Staff", "A long stick that conducts code well.", 3, 14, 12, 9);
-   weapon ice_staff = new weapon("Cube Staff","A rod that conducts cold magic.", 3, 18, 7, 12);
-   weapon fire_staff = new weapon("Torch","A burning staff.", 7, 22, 15, 6);
-   weapon lightning_staff = new weapon("Charge Rod","Lightning runs along the runes.", 5, 20, 6, 20);
+   weapon staff = new weapon("Staff", "A long stick that conducts code well.", "Magic", 3, 14, 12, 9);
+   weapon ice_staff = new weapon("Cube Staff","A rod that conducts cold magic.", "Cold", 3, 18, 7, 12);
+   weapon fire_staff = new weapon("Torch","A burning staff.", "Fire", 7, 22, 15, 6);
+   weapon lightning_staff = new weapon("Charge Rod","Lightning runs along the runes.", "Electric", 5, 20, 6, 20);
       
    //Assorted Items
-   item restorative = new item("Restorative", "A compact version of a Malicious Software Removal Tool.", "Healing", 53);
-   item boost = new item("Boost Potion", "Task Manager: Helps clear up those congested systems!", "Boost", 4);
-   item firebomb = new item("Fire Bomb", "A firewall in a conveniently small package.", "Grenade", 12);
+   item restorative = new item("Restorative", "A compact version of a Malicious Software Removal Tool.\nHeals 53 HP.", "Healing", 53);
+   item boost = new item("Boost Potion", "Task Manager: Helps clear up those congested systems!\nIncreases Attack stat and Damage output by 4.", "Boost", 4);
+   //item firebomb = new item("Fire Bomb", "A firewall in a conveniently small package.", "Grenade", 12);
    
    //The testing feats.
    //Rogue: Starting
    feat flurry = new feat("Flurry", "The user speeds up their attacks,\nallowing them to attack twice a round.", 0, 2, 0, 0, 0, "Attack Twice", true);
    //Rogue: Unlockable
-   feat flashbang = new feat("Flourish", "A flashy attack that slips through enemy defenses", 8, 8, 0, 0, 0, "Power Attack",true);
+   feat killer_instinct = new feat("Killer Instinct", "You find the weakness in an enemy and strike fast.\nDealing damage equal to half the enemy's health.", 0, 0, 0, 0, 0, "Half Damage",true);
    
    //Warrior: Starting
    feat power_attack = new feat("Power Attack", "The user puts all their strength into one swing,\nmaking it more likely to miss but deal more damage.", -3, 8, 0, 0, 0, "Power Attack", true);
    //Warrior: Unlockable
-   feat parry_strike = new feat("Parry", "After attacking, the user assumes\na defensive stance, ready for the next attack.", -2, 5, 0, 10, 10, "Defensive", true);
+   feat parry = new feat("Parry", "After attacking, the user assumes\na defensive stance, ready for the next attack.", -4, 5, 0, 10, 10, "Defensive", true);
    
    //Mage: Starting
    feat arcane_blast = new feat("Arcane Burst","Waves of code lash out at your opponents.", 5, 15, 0, 0, 0, "Full Attack", false);
@@ -66,9 +78,13 @@ public class dialogTest
    
    
    //An NPC ArrayList for battles.
-   NPC testEnemy = new NPC("Code Snippet", 100, 100, dagger, 13, 10, 0);
-   NPC testEnemy2 = new NPC("Code Snippet 2", 100, 100, dagger, 18, 10, 0);
-   NPC testEnemy3 = new NPC("Code Snippet 3", 100, 100, dagger, 9, 10, 0);
+   NPC testEnemy = new NPC("Code Snippet", 100, 100, dagger, 13, 10);
+   NPC testEnemy2 = new NPC("Code Snippet 2", 100, 100, dagger, 18, 10);
+   NPC testEnemy3 = new NPC("Code Snippet 3", 100, 100, dagger, 9, 10);
+   NPC lieutenant = new NPC("Corrupted Snippet", 180, 180, corruption, 22, 18);
+   NPC lieutenant2 = new NPC("Corrupted Snippet 2", 250, 180, corruption, 22, 20);
+   NPC lieutenant3 = new NPC("Corrupted Snippet 3", 300, 180, corruption, 22, 25);
+   NPC webroot = new NPC("Web Officer", 180, 180, corruption, 22, 20);
    ArrayList<NPC> enemies = new ArrayList<>();
    
    //
@@ -104,12 +120,12 @@ public class dialogTest
       if(p.getType() == "Rogue")
       {
          p.addFeat(flurry);
-         p.addFeat(flashbang);
+         p.addFeat(killer_instinct);
       }
       if(p.getType() == "Warrior")
       {
          p.addFeat(power_attack);
-         p.addFeat(parry_strike);
+         p.addFeat(parry);
       }
       if(p.getType() == "Mage")
       {
@@ -202,15 +218,15 @@ public class dialogTest
                System.out.println("You got the " + test_blade.getName() + "!");
                System.out.print("In addition to "+ i +" Restorative" + multiples(i));
                System.out.print(", " + j + " Boost Potion" + multiples(j));
-               System.out.print(", and " + k + " Grenade" + multiples(k));
+               //System.out.print(", and " + k + " Grenade" + multiples(k));
                System.out.println("!");
                p.addToInventory(test_blade);
                for(int num = 0; num < i; num++)
                   p.addToInventory_item(restorative);
                for(int num = 0; num < j; num++)
                   p.addToInventory_item(boost);
-               for(int num = 0; num < k; num++)
-                  p.addToInventory_item(firebomb);
+               //for(int num = 0; num < k; num++)
+                  //p.addToInventory_item(firebomb);
                break;
             case 11:
                int roll = p.makeRoll();
@@ -235,6 +251,7 @@ public class dialogTest
       
       p.removeFeats();
       p.removeItems();
+      p.resetHealth();
    }
    
    public void run() //The game storyline.  Accessible in normal and debug mode.
@@ -521,6 +538,11 @@ public class dialogTest
                       {
                           p.addToInventory_item(restorative);
                       }
+                      if(!rest_desc)
+                      {
+                          rest_desc = true;
+                          System.out.println(restorative + ": " + restorative.getDesc());
+                      }
                    }
                    else
                    {
@@ -557,11 +579,11 @@ public class dialogTest
        
        EntertoContinue();
        
-       if(p.getHealth() < 100) //The first parity.
+       if(p.getHealth() < 100) //The Outer Hub.
        {
            System.out.print("While you are walking, you happen upon a young woman in the forest.");
            EntertoContinue_silent();
-           System.out.println("1 - Talk to her\n2 - Ambush her\n3 - Keep walking");
+           System.out.println("1 - Talk to her\n2 - Ambush her");
            
            selection = kb.nextInt();
            switch(selection)
@@ -569,16 +591,16 @@ public class dialogTest
                case 1:
                    System.out.print("You greet the girl.  She is a little surprised.");
                    EntertoContinue_silent();
-                   System.out.print("After a long silence, she speaks up...");
+                   System.out.println("After a long silence, she speaks up...");
                    EntertoContinue_silent();
                    System.out.println("\"Is there something you need?\"");
-                   System.out.println("1 - \"What are you doing?\"\n2 - \"Where am I?\"\n3 - \"Never mind.\"");
+                   System.out.println("1 - \"What are you doing?\"\n2 - \"Where am I?\"");
                    
                    selection = kb.nextInt();
                    switch(selection)
                    {
                        case 1:
-                           System.out.println("\"There have been Parities popping up everywhere,\nripping the world apart.\"");
+                           System.out.print("\"There have been Parities popping up everywhere,\nripping the world apart.\"");
                            EntertoContinue_silent();
                            System.out.println("1 - \"Parities?\"");
                            while(kb.nextInt() != 1)
@@ -587,15 +609,16 @@ public class dialogTest
                            }
                            System.out.print("\"Yeah...the big breaches in the world that consume everything they touch.\"");
                            EntertoContinue_silent();
-                           System.out.print("\"My father sent me to check on the central hub.\"");
+                           System.out.print("\"I'm going to check on the central hub.\"");
                            EntertoContinue_silent();
-                           System.out.println("\"He's worried this might spread to the rest of the Web.\"");
+                           System.out.println("\"I'm worried this might spread to the rest of the Web.\"");
                            EntertoContinue_silent();
                            break;
                        case 2:
                            System.out.print("\"You seem confused...Are you from here?\"");
-                           break;
-                       case 3:
+                           EntertoContinue_silent();
+                           System.out.println("\"Although with the parities and all, I'll bet we're all confused.\"");
+                           EntertoContinue_silent();
                            break;
                    }
                    break;
@@ -608,10 +631,10 @@ public class dialogTest
                    EntertoContinue_silent();
                    System.out.println("\"I need you to go to the central hub and check on things there.\"");
                    System.out.println("\"Whatever you do, keep away from the Parities.\"");
-                   break;
-               case 3:
+                   EntertoContinue_silent();
                    break;
            }
+           
            System.out.print("If you weren't sure already, this confirmed it.");
            EntertoContinue_silent();
            System.out.print("You were inside the Web, or part of it at least.");
@@ -634,7 +657,46 @@ public class dialogTest
            EntertoContinue_silent();
            if(!npc_lives)
            {
-               System.out.println("At any rate, you should get going.  Who knows what could happen...");
+               System.out.print("At any rate, you should get going.  Who knows what could happen...");
+               EntertoContinue_silent();
+               System.out.print("She was headed for the central hub...Maybe that's your way out.");
+               EntertoContinue_silent();
+               System.out.print("Along your journey, you find a ");
+               
+               if(p.getType().equals("Mage"))
+               {
+               System.out.print(ice_staff + ". (Attack: " + (ice_staff.getBase()+ice_staff.getAtkB()) + " Damage: " + ice_staff.getDamage() + ")\n" + ice_staff.getDesc());
+               p.addToInventory(ice_staff);
+               }
+               else
+               {
+               System.out.print(corruption + ". (Attack: " + (corruption.getBase()+corruption.getAtkB()) + " Damage: " + corruption.getDamage() + ")\n" + corruption.getDesc());
+               p.addToInventory(corruption);
+               }
+               
+               do
+               {
+                   System.out.println("Equip? 1 - Yes  2 - No");
+                   
+                   selection = kb.nextInt();
+               }while(selection < 1 || selection > 2);
+               switch(selection)
+               {
+                   case 1:
+                       p.unequip();
+                       p.equipWeapon();
+                       break;
+                   case 2:
+                       break;
+               }
+               if(p.getType().equals("Mage"))
+               {
+                  System.out.print("You feel the magic flowing through this weapon.");
+                  EntertoContinue_silent();
+                  p.addFeat(freeze);
+                  System.out.println("New Feat Gained: " + freeze);
+                  System.out.println(freeze.getDesc());
+               }
            }
            else
            {
@@ -647,15 +709,15 @@ public class dialogTest
                {
                    case 1:
                        p.setMorality(5);
-                       System.out.print("\"I think I'll be okay.  I need to...\"");
+                       System.out.println("\"I think I'll be okay.  I need to...\"");
                        EntertoContinue_silent();
-                       System.out.print("She pauses for a moment...");
+                       System.out.println("She pauses for a moment...");
                        EntertoContinue_silent();
                        System.out.print("\"Actually, I do...\"");
                        EntertoContinue_silent();
-                       System.out.print("\"I probably won't make it to the central hub.\"");
+                       System.out.println("\"I probably won't make it to the central hub.\"");
                        EntertoContinue_silent();
-                       System.out.print("She looks away with a defeated look on her face.");
+                       System.out.println("She looks away with a defeated look on her face.");
                        EntertoContinue_silent();
                        System.out.print("\"It was foolish of me to think I could with all the rogue code.\"");
                        EntertoContinue_silent();
@@ -673,19 +735,19 @@ public class dialogTest
                                EntertoContinue_silent();
                                System.out.print("\"Well, if you can do that, we might have a chance...\"");
                                EntertoContinue_silent();
-                               System.out.print("\"If I can gather people to fix the parities here, can you go fix the larger parities,\nincluding the one in the central hub?\"");
+                               System.out.print("\"If I can gather people to fix the parities here, can you go fix the parity in the central hub?\"");
                                EntertoContinue_silent();
-                               System.out.println("\"I think there are at most two more...\"");
-                               System.out.println("1 - \"Sure thing.  Might as well help while I'm here.\n2 - \"Do what you want.  I need to get out of here now.\"\"");
+                               System.out.println("1 - \"Sure thing.  Might as well help while I'm here.\"\n2 - \"Do what you want.  I need to get out of here now.\"");
                                
                                selection = kb.nextInt();
                                switch(selection)
                                {
                                    case 1:
+                                       help_npc = true;
                                        p.setMorality(8);
                                        System.out.print("\"Thank you.  I'll do my best here; good luck.\"");
                                        EntertoContinue_silent();
-                                       System.out.print("\"Here.  I'm not sure if it'll help, but I think you can use this...\"");
+                                       System.out.println("\"Here.  I'm not sure if it'll help, but I think you can use this...\"");
                                        EntertoContinue_silent();
                                        System.out.print("You got the ");
                                        if(p.getType().equals("Mage"))
@@ -725,6 +787,43 @@ public class dialogTest
                                    case 2:
                                        p.setMorality(-8);
                                        System.out.print("\"Well, I'll do what I can to help but my friends and family need me.\"");
+                                       EntertoContinue_silent();
+                                       System.out.print("\"Here.  I'm not sure if it'll help, but I think you can use this...\"");
+                                       EntertoContinue_silent();
+                                       System.out.println("You got the ");
+                                       if(p.getType().equals("Mage"))
+                                       {
+                                           System.out.println(fire_staff + "! (Attack: " + (fire_staff.getBase()+fire_staff.getAtkB()) + " Damage: " + fire_staff.getDamage() + ")");
+                                           p.addToInventory(fire_staff);
+                                       }
+                                       else
+                                       {
+                                           System.out.println(whitesteel + "! (Attack: " + (whitesteel.getBase()+whitesteel.getAtkB()) + " Damage: " + whitesteel.getDamage() + ")");
+                                           p.addToInventory(whitesteel);
+                                       }
+                                       do
+                                       {
+                                       System.out.println("Equip? 1 - Yes  2 - No");
+                                       
+                                       selection = kb.nextInt();
+                                       }while(selection < 1 || selection > 2);
+                                       switch(selection)
+                                       {
+                                           case 1:
+                                               p.unequip();
+                                               p.equipWeapon();
+                                               break;
+                                           case 2:
+                                               break;
+                                       }
+                                       if(p.getType().equals("Mage"))
+                                       {
+                                          System.out.print("You feel the magic flowing through this weapon.");
+                                          EntertoContinue_silent();
+                                          p.addFeat(lightning);
+                                          System.out.println("New Feat Gained: " + lightning);
+                                          System.out.println(lightning.getDesc());
+                                       }
                                        break;
                                }
                                break;
@@ -744,11 +843,318 @@ public class dialogTest
                }
                }while(selection != 1);
            }
+           
+           if(!p.getType().equals("Mage"))
+           {
+              System.out.print("While you were traveling, you were able\nto get some practice with your weapon.");
+              EntertoContinue_silent();
+              if(p.getType().equals("Rogue"))
+              {
+                 p.addFeat(killer_instinct);
+                 System.out.println("New Feat Gained: " + killer_instinct);
+                 System.out.println(killer_instinct.getDesc());
+              }
+              else
+              {
+                 p.addFeat(parry);
+                 System.out.println("New Feat Gained: " + parry);
+                 System.out.println(parry.getDesc());
+              }
+           }
+       }
+       
+       EntertoContinue();
+       
+       if(p.getHealth() < 100) //The Central Hub.
+       {
+           if(npc_lives)
+           {
+               System.out.print("While she is fixing the smaller parities, you");
+           }
+           else
+           {
+               System.out.print("You");
+           }
+                      
+           System.out.print(" reach the entrance to the central hub.");
+           EntertoContinue_silent();
+           System.out.println("You are immediately greeted by what seems to be a guard.");
+           EntertoContinue_silent();
+           System.out.println("\"Halt!  This is the central hub; what is your business here?\"");
+           
+           do
+           {
+           if(!needtoleave)
+           {
+              System.out.println("1 - \"I heard you need help fixing parities.\"\n2 - \"I'm just looking to get out of here.\"\n3 - [Attack the guard]");
+           }
+           else
+           {
+              System.out.println("1 - \"I heard you need help fixing parities.\"\n2 - [Attack the guard]"); 
+           }
+           
+           selection = kb.nextInt();
+           switch(selection)
+           {
+               case 1:
+                   help_webroot = true;
+                   System.out.println("\"We might...and you do look like a capable person...\"");
+                   EntertoContinue_silent();
+                   System.out.println("You hear a familiar buzz, but much louder...");
+                   EntertoContinue_silent();
+                   System.out.print("\"Wait...What was that...\"");
+                   EntertoContinue_silent();
+                   System.out.print("\"Rogue code!  On your guard!\"");
+                   EntertoContinue_silent();
+                   p.resetHealth();
+                   System.out.println("\"Here, take these.\"");
+                   System.out.println("(Items Received: 10 Restoratives and 3 Boost Potions)");
+                   for(int i = 0; i < 10; i++)
+                   {
+                       p.addToInventory_item(restorative);
+                   }
+                   if(!rest_desc)
+                   {
+                          rest_desc = true;
+                          System.out.println(restorative + ": " + restorative.getDesc());
+                   }
+                   for(int i = 0; i < 3; i++)
+                   {
+                       p.addToInventory_item(boost);
+                   }
+                   if(!boost_desc)
+                   {
+                          boost_desc = true;
+                          System.out.println(boost + ": " + boost.getDesc());
+                   }
+                   EntertoContinue_silent();
+                   if(enemies.size() == 0)
+                   {
+                       enemies.add(testEnemy);
+                       enemies.add(lieutenant);
+                       enemies.add(testEnemy2);
+                       enemies.add(testEnemy3);
+                   }
+                   battleSystem(p, enemies);
+                   break;
+               case 2:
+                   if(!needtoleave)
+                   {
+                       needtoleave = true;
+                       System.out.println("\"Then you might as well forget it...The way ahead is blocked by a large parity.\"");
+                   }
+                   else
+                   {
+                       p.setMorality(-20);
+                       kill_webroot = true;
+                       p.setHealth(webroot.getEquipped().getDamage());
+                       System.out.print("You charge at the guard, but are stabbed with his data miner. (CPU Usage: " + p.getHealth() + ")");
+                       EntertoContinue_silent();
+                       System.out.print("You quickly pull back, holding you chest...");
+                       EntertoContinue_silent();
+                       System.out.println("Rogue code surronds the two of you.");
+                       EntertoContinue_silent();
+                       System.out.print("\"So you want to fight, huh?  Then bring it on.\"");
+                       EntertoContinue_silent();
+                       if(enemies.size() == 0)
+                       {
+                           enemies.add(webroot);
+                           enemies.add(testEnemy);
+                           enemies.add(lieutenant);
+                           enemies.add(testEnemy2);
+                           enemies.add(testEnemy3);
+                       }
+                       battleSystem(p, enemies);
+                       selection = 1;
+                   }
+                   break;
+               case 3:
+                   if(!needtoleave)
+                   {
+                      p.setMorality(-20);
+                      kill_webroot = true;
+                      p.setHealth(webroot.getEquipped().getDamage());
+                      System.out.print("You charge at the guard, but are stabbed with his data miner. (CPU Usage: " + p.getHealth() + ")");
+                      EntertoContinue_silent();
+                      System.out.print("You quickly pull back, holding you chest...");
+                      EntertoContinue_silent();
+                      System.out.println("Rogue code surronds the two of you.");
+                      EntertoContinue_silent();
+                      System.out.print("\"So you want to fight, huh?  Then bring it on.\"");
+                      EntertoContinue_silent();
+                      if(enemies.size() == 0)
+                      {
+                          enemies.add(webroot);
+                          enemies.add(testEnemy);
+                          enemies.add(lieutenant);
+                          enemies.add(testEnemy2);
+                          enemies.add(testEnemy3);
+                      }
+                      battleSystem(p, enemies);
+                      selection = 1;
+                   }   
+                   break;
+           }
+           }while(selection != 1);
+       }
+       
+       EntertoContinue();
+       
+       if(p.getHealth() < 100) //The final battle.
+       {
+           if(kill_webroot)
+           {
+              System.out.print("Rogue code seems to be crawling out of everywhere.");
+              EntertoContinue_silent();
+              System.out.print("The central hub looks to be crumbling to pieces.");
+              EntertoContinue_silent();
+              System.out.println("You need to do something.");
+              System.out.println("1 - Charge at the rogue code\n2 - Run to the parity.");
+              selection = kb.nextInt();
+              switch(selection)
+              {
+                  case 1:
+                      System.out.print("Despite your better judgement, you pull your weapon\nand charge at the rogue snippets.");
+                      EntertoContinue_silent();
+                      System.out.print("You quickly realize you are vastly outnumbered.");
+                      EntertoContinue_silent();
+                      System.out.print("As the rogue snippets consume you, everything fades to black...");
+                      EntertoContinue_silent();
+                      System.exit(0);
+                      break;
+                  case 2:
+                      break;
+              }
+           }
+           else
+           {
+              System.out.print("The central hub looks to be crumbling to pieces.");
+              EntertoContinue_silent();
+              System.out.println("More code snippets close in on you and the officer.");
+              EntertoContinue_silent();
+              System.out.print("\"That was unexpected.  It looks like the hub is getting worse.\"");
+              EntertoContinue_silent();
+              System.out.println("\"If we don't fix it soon...We're done...\"");
+              System.out.println("1 - \"If I try to fix the central parity, can you keep the rogue code busy?\"\n2 - \"This is crazy!  I need to leave and fast!\" [Run]");
+              
+              selection = kb.nextInt();
+              switch(selection)
+              {
+                  case 1:
+                      find_main = true;
+                      System.out.print("\"I think so; but make it quick.\"");
+                      EntertoContinue_silent();
+                      System.out.println("\"The way the hub's looking, it doesn't look like we have much time.\"");
+                      EntertoContinue_silent();
+                      System.out.println("Rogue code closes in on the two of you.");
+                      EntertoContinue_silent();
+                      System.out.println("\"Go!  I'll hold them off.\"");
+                      EntertoContinue_silent();
+                      break;
+                  case 2:
+                      System.out.print("You take off, leaving the officer confused and at the mercy\nof the rogue code.");
+                      EntertoContinue_silent();
+                      break;
+              }
+           }
+           
+           System.out.print("You run towards the parity, seeing no other way to go.");
+           EntertoContinue_silent();
+           System.out.println("Rogue code snippets quickly block your way.");
+           EntertoContinue_silent();
+           if(enemies.size() == 0)
+           {
+               enemies.add(testEnemy);
+               enemies.add(lieutenant);
+               enemies.add(testEnemy2);
+               enemies.add(lieutenant2);
+               enemies.add(testEnemy3);
+               enemies.add(lieutenant3);
+           }
+           
+           battleSystem(p, enemies);
+       }
+       
+       EntertoContinue();
+       
+       if(p.getHealth() < 100) //The final choice.
+       {
+           System.out.print("You notice something familiar about the code in the parity.");
+           EntertoContinue_silent();
+           System.out.println("This code pertains to the integrity of the World Wide Web!");
+           EntertoContinue_silent();
+           System.out.println("If it collapses, there could be severe consequences to the world and to you...");
+           EntertoContinue_silent();
+           System.out.print("If you hack the parity, you can ensure that you get out.");
+           EntertoContinue_silent();
+           System.out.println("However, the Web may be left completely vulnerable to hacking...");
+           EntertoContinue_silent();
+           System.out.print("If you fix the parity, your new server will be complete and the Web will be safe.");
+           EntertoContinue_silent();
+           System.out.println("However, you may not be able to leave...");
+           EntertoContinue_silent();
+           System.out.println("1 - Fix the parity\n2 - Hack the parity\n3 - Leave the parity alone.");
+           selection = kb.nextInt();
+           switch(selection)
+           {
+               case 1:
+                   fix_main = true;
+                   System.out.println("\"I might as well finish my work.\"");
+                   EntertoContinue_silent();
+                   System.out.print("You reach both hands out to the parity, letting your\nthoughts become code and fixing the parity.");
+                   EntertoContinue_silent();
+                   System.out.print("The parity settles down as does the rogue code...");
+                   EntertoContinue_silent();
+                   System.out.print("The rogue code wraps itself around you...");
+                   EntertoContinue_silent();
+                   System.out.print("The colors change from red and black to blue and white...");
+                   EntertoContinue_silent();
+                   System.out.print("You hear an explosion around you before the world quickly turns to black...");
+                   EntertoContinue_silent();
+                   System.out.print("You wake up to find yourself back home.\nYour computer is turned off due to the power surge.");
+                   EntertoContinue_silent();
+                   System.out.println("You turn on the computer and check the status of your server...");
+                   break;
+               case 2:
+                   hack_main = true;
+                   System.out.println("\"This server is hopeless.  I better close it down.\"");
+                   EntertoContinue_silent();
+                   System.out.print("You reach both hands out to the parity, letting your\nthoughts become code.");
+                   EntertoContinue_silent();
+                   System.out.print("The parity sparks and crackles, destroying all around it...");
+                   EntertoContinue_silent();
+                   System.out.print("The parity turns into a bright hole in the middle of nowhere...");
+                   EntertoContinue_silent();
+                   System.out.print("You are sucked in to the parity...");
+                   EntertoContinue_silent();
+                   System.out.print("You hear an explosion around you...");
+                   EntertoContinue_silent();
+                   System.out.print("You wake up to find yourself back home.\nYour computer is turned off due to the power surge.");
+                   EntertoContinue_silent();
+                   System.out.println("You turn on the computer and check the status of your server...");
+                   break;
+               case 3:
+                   System.out.println("\"...\"");
+                   EntertoContinue_silent();
+                   System.out.print("For some reason, you find yourself unable to act...");
+                   EntertoContinue_silent();
+                   System.out.print("Suddenly, the rogue code and the parity charge towards you...");
+                   EntertoContinue_silent();
+                   System.out.print("Unable to move, you feel the rogue code and the parity\ncollide on top of you...");
+                   EntertoContinue_silent();
+                   System.out.print("You hear and feel an explosion directly centered on you...\nEverything fades...");
+                   EntertoContinue_silent();
+                   System.out.print("You wake up surrounded by nothing but black space...");
+                   EntertoContinue_silent();
+                   System.out.println("You see bits of familiar code float away and fade into nothing...");
+                   break;
+           }
        }
        
        EntertoContinue();
        p.removeFeats();
        p.removeItems();
+       p.resetHealth();
    }
    
    public static void EntertoContinue() //Stops the output until the user presses Enter.
@@ -884,6 +1290,232 @@ public class dialogTest
          p.resetUnarmed();
       }   
    }
+   
+   public void resetChoices()
+   {
+      blob_exm = false; //Examine the code blobs.
+      par_exm = false; //Examine the parity.
+      par_fix = false; //Choose between fixing the parity and leaving it.
+      code = false; //Examine the blobs before battle.
+      npc_lives = true; //Talk to or ambush npcs.
+      help_npc = false; //Helped the npc with her job.
+      needtoleave = false; //Select need to leave dialog.
+      help_webroot = false; //Helped the officer?
+      kill_webroot = false; //Attacked the officer?
+      find_main = false; //Went to find the main parity.
+      fix_main = false; //Decided to fix the main parity.
+      hack_main = false; //Decided to hack the main parity.
+      fullhackend = false;
+      fullfixend = false;
+      rest_desc = false; //Found a restorative.
+      boost_desc = false; //Found a boost potion.
+   }
+   
+   public void endingDialog()
+   {
+      if(!fix_main && !hack_main) //Neutral End.
+      {
+          System.out.print("As you float by yourself, you wonder about what happened outside of where you are...");
+          EntertoContinue_silent();
+          System.out.print("Whatever it was, you won't see it...");
+          EntertoContinue_silent();
+          System.out.print("This realization leaves you ill at ease...");
+          EntertoContinue_silent();
+          System.out.println("Your left wondering what you could have done...");
+      }
+      else
+      {
+         System.out.print("As your server opens, you wonder about\nwhat effects your actions may or may not have had.");
+         EntertoContinue_silent();
+         if(npc_lives)
+         {
+             if(help_npc)
+             {
+                System.out.print("The server seems to be fully operational...");
+                EntertoContinue_silent();
+                System.out.print("The best internet can be found even around the corners of the globe.");
+                EntertoContinue_silent();
+                System.out.print("You are reminded of the young woman you saw...");
+                EntertoContinue_silent();
+                System.out.println("Motivated by your kindness, she must have stopped the parities...");
+                EntertoContinue_silent();
+             }
+             else
+             {
+                System.out.print("The server seems to be operational...");
+                EntertoContinue_silent();
+                System.out.print("The internet is still very spotty in many parts of the world.");
+                EntertoContinue_silent();
+                System.out.print("You are reminded of the young woman you saw...");
+                EntertoContinue_silent();
+                System.out.println("Even though she tried, she must have been stopped by the parities...");
+                EntertoContinue_silent();
+             }
+         }
+         else
+         {
+             System.out.print("The server has limited operation outside of heavily-populated countries...");
+             EntertoContinue_silent();
+             System.out.print("For some reason, you are reminded of the young woman you ambushed...");
+             EntertoContinue_silent();
+             System.out.println("You wonder why she came to mind...");
+             EntertoContinue_silent();
+         }
+         
+         System.out.print("With the internet ");
+         if(help_npc)
+         {
+            System.out.print("being everywhere");
+         }
+         else
+         {
+            System.out.print("being accessible again");
+         }
+         
+         if(help_webroot)
+         {
+            System.out.print(", you are surprised there aren't any hacking reports...");
+            EntertoContinue_silent();
+            System.out.print("The officer you helped, for some reason, came to mind...");
+            EntertoContinue_silent();
+            System.out.print("\"Maybe he made it...Maybe I saved him...\"");
+            EntertoContinue_silent();
+            System.out.println("Or maybe you were just thinking out loud...");
+            EntertoContinue_silent();
+         }
+         else
+         {
+            if(kill_webroot)
+            {
+               System.out.print(", it would be assumed that people are being hacked...");
+               EntertoContinue_silent();
+               System.out.print("But you never thought it would be this prevalent...");
+               EntertoContinue_silent();
+               System.out.print("Almost everyone's computers have been hacked...");
+               EntertoContinue_silent();
+               System.out.print("The officer you killed, for some reason, came to mind...");
+               EntertoContinue_silent();
+               System.out.println("You quickly dismiss that thought...He couldn't have been that important...");
+               EntertoContinue_silent();
+            }
+            else
+            {
+               System.out.print(", it would be assumed that people are being hacked.");
+               EntertoContinue_silent();
+               System.out.print("But it seems fine, not so much as to cause worry...");
+               EntertoContinue_silent();
+               System.out.print("The officer you fought with, for some reason, came to mind...");
+               EntertoContinue_silent();
+               System.out.println("You can't help but wonder why...");
+               EntertoContinue_silent();
+            }
+         }
+         
+         if(find_main)
+         {
+             System.out.print("After everything, you hope the parities won't come back...");
+         }
+         else
+         {
+             System.out.print("You still feel a little winded from everything that happened...");
+             EntertoContinue_silent();
+             System.out.println("But, at least your back home...");
+         }
+         
+         EntertoContinue_silent();
+         
+         if(fix_main)
+         {
+             if(find_main)
+             {
+                System.out.print("Thankfully, you ");
+             }
+             else
+             {
+                System.out.print("You ");
+             }
+             System.out.print("remember the code you put into the central parity...");
+             EntertoContinue_silent();
+             System.out.print("With that, ");
+             if(help_npc)
+             {
+                System.out.print("the young woman's work, and ");
+             }
+             if(help_webroot)
+             {
+                if(!help_npc)
+                {
+                   System.out.print("and ");
+                }
+                System.out.print("the officer's work...");
+             }
+             System.out.println("you feel everything should be alright...");
+             EntertoContinue_silent();
+         }
+         else
+         {
+             System.out.print("Although you got back home, hacking the parity may have inadvertedly cause some security leaks...");
+             EntertoContinue_silent();
+             System.out.println("You feel concerned for what may or may not happen...");
+             EntertoContinue_silent();
+         }
+         
+         if(!npc_lives)
+         {
+             if(kill_webroot)
+             {
+                 if(hack_main)
+                 {
+                     fullhackend = true;
+                 }    
+             }
+         }
+         
+         if(npc_lives)
+         {
+             if(help_webroot)
+             {
+                 if(fix_main)
+                 {
+                     fullfixend = true;
+                 }
+             }
+         }
+         
+         if(fullhackend)
+         {
+             System.out.print("Suddenly, you notice a power outage all over the area...");
+             EntertoContinue_silent();
+             System.out.print("You pull out your phone and notice that all wifi and other connections are gone...");
+             EntertoContinue_silent();
+             System.out.print("Without any protection, the server must have not been able\nto handle all the hacking...");
+             EntertoContinue_silent();
+             System.out.print("As such, the server must have overloaded and shut down the World Wide Web...");
+             EntertoContinue_silent();
+             System.out.println("You can't imagine how much this will set back humanity...");
+             EntertoContinue_silent();
+         }
+         
+         if(fullfixend)
+         {
+             System.out.print("As you look on the web, you notice something...");
+             EntertoContinue_silent();
+             System.out.print("Everyone is grateful that they can all communicate safely...");
+             EntertoContinue_silent();
+             System.out.print("You think to yourself...");
+             EntertoContinue_silent();
+             System.out.print("\"I made life better for all these people...\"");
+             EntertoContinue_silent();
+             System.out.println("You take some comfort knowing that you did something to help the world...");
+             EntertoContinue_silent();
+         }
+         
+      }
+      
+      System.out.println("THE END");
+      EntertoContinue();
+      
+   }
 
    public static void main(String[] args) //The main statement, responsible for activating the dialogTest.
    {
@@ -919,6 +1551,7 @@ public class dialogTest
           case 1:
              d.p.setHealth(0);
              d.run();
+             d.endingDialog();
              break;
           case 2:
              d.open();
@@ -928,6 +1561,7 @@ public class dialogTest
              System.exit(0);
              break;
       }
+      d.resetChoices();
       }while(selection != 3);
    }
 }

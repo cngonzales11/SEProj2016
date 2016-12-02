@@ -20,14 +20,13 @@ public class NPC
    private int attack_re;
    private boolean damaged = false;
    private int defense;
-   private int spellpower;
    
    //
    //CONSTRUCTOR:
    //
    
    //The constructor for a Non-Player Character.
-   public NPC(String c, int h, int m, weapon e, int i, int d, int s)
+   public NPC(String c, int h, int m, weapon e, int i, int d)
    {
       className = c;
       health = h;
@@ -35,7 +34,6 @@ public class NPC
       equipped = e;
       initiative = i;
       defense = d;
-      spellpower = s;
    }
    
    //
@@ -63,12 +61,6 @@ public class NPC
    public void setDef(int amount)
    {
       defense += amount;
-   }
-   
-   //Sets the NPC's spellpower, if the NPC is a mage.
-   public void setSP(int amount)
-   {
-      spellpower += amount;
    }
    
    //Sets the NPC's damaged attribute.
@@ -117,12 +109,6 @@ public class NPC
       return defense;
    }
    
-   //Returns the NPC's spellpower, if the NPC is a mage.
-   public int getSP()
-   {
-      return spellpower;
-   }
-   
    //Returns if the NPC is damaged by poison, burn, etc.
    public boolean getDamaged()
    {
@@ -157,10 +143,32 @@ public class NPC
       int atroll;
       atroll = makeRoll();
       int weapon_bonus = w.getBase() + w.getAtkB();
-      System.out.println((atroll+weapon_bonus-attack_re) + " vs. " + p.getDef());
-      if(atroll+weapon_bonus-attack_re > p.getDef() && atroll != 1)
+      int player_def;
+      if(p.getEquipped().getDamageType().equals("Cold"))
       {
-         System.out.println("Hit! Player suffers " + w.getDamage() + " damage!");
+          player_def = p.getDef() + p.getEquipped().getStB();
+      }
+      else
+      {
+          player_def = p.getDef();
+      }
+      System.out.println((atroll+weapon_bonus-attack_re) + " vs. " + player_def);
+      if(atroll+weapon_bonus-attack_re > player_def && atroll != 1)
+      {
+         int player_damage;
+         if(p.getEquipped().getDamageType().equals("Cold"))
+         {
+            player_damage = w.getDamage()-p.getEquipped().getStB();
+            if(player_damage < 0)
+            {
+               player_damage = 0;
+            }
+         }
+         else
+         {
+            player_damage = w.getDamage();
+         }
+         System.out.println("Hit! Player suffers " + player_damage + " damage!");
          p.setHealth(w.getDamage());
          System.out.println("CPU Usage: " + p.getHealth());
       }
