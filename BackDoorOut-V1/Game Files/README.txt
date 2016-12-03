@@ -1,8 +1,8 @@
 Back-Door Out: A Text-Based Adventure Game
 ------------------------------------------------
 To install:
-Extract the zip file to the directory you want.
-For simplicity, it is recommended to place the folder in your local disk (C:\ or E:\, etc.)
+Extract the content of the BackDoorOut.zip file to the directory you want.
+For simplicity, it is recommended to place the folder in your local disk (C:\, etc.)
 
 The zip file contains the executable file (.jar) and the source code in a source folder.
 ------------------------------------------------
